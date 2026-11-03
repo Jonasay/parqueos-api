@@ -19,11 +19,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     } 
     // 2. Manejo de Errores del ORM (Prisma) 
     else if (exception instanceof Prisma.PrismaClientKnownRequestError) {
-      if (exception.code === 'P2002') {
-        status = HttpStatus.UNPROCESSABLE_ENTITY; // Código 422 exigido en la rúbrica
+      const errorPrisma = exception as Prisma.PrismaClientKnownRequestError;
+      if (errorPrisma.code === 'P2002') {
+        status = HttpStatus.UNPROCESSABLE_ENTITY;
         message = 'El registro ya existe (Violación de restricción única).';
-      } else if (exception.code === 'P2025') {
-        status = HttpStatus.NOT_FOUND; // Código 404[cite: 7]
+      } else if (errorPrisma.code === 'P2025') {
+        status = HttpStatus.NOT_FOUND;
         message = 'Registro no encontrado en la base de datos.';
       }
     }

@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
+import { isAxiosError } from 'axios';
 import { LoginDto } from './dto/login.dto.js';
 
 @Injectable()
@@ -20,7 +21,7 @@ export class AuthService {
     
       return respuesta.data; 
     } catch (error) {
-      if (error.response && error.response.status === 401) {
+      if (isAxiosError(error) && error.response?.status === 401) {
         throw new UnauthorizedException('Credenciales inválidas.');
       }
       throw new InternalServerErrorException('Error de comunicación con el servicio externo de autenticación.');
