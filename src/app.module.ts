@@ -14,6 +14,12 @@ import { TarifasModule } from './modules/tarifas/tarifas.module.js';
 import { PensionesModule } from './modules/pensiones/pensiones.module.js';
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module.js';
 import { SucursalesModule } from './modules/sucursales/sucursales.module.js';
+import { NivelesParqueoModule } from './modules/niveles-parqueo/niveles-parqueo.module.js';
+import { TiposVehiculoModule } from './modules/tipos-vehiculo/tipos-vehiculo.module.js';
+import { EstadosEspacioModule } from './modules/estados-espacio/estados-espacio.module.js';
+import { MetodosPagoModule } from './modules/metodos-pago/metodos-pago.module.js';
+import { RolesModule } from './modules/roles/roles.module.js';
+import { AuthModule } from './modules/auth/auth.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -38,6 +44,12 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     PensionesModule,
     AuditLogsModule,
     SucursalesModule,
+    NivelesParqueoModule,
+    TiposVehiculoModule,
+    EstadosEspacioModule,
+    MetodosPagoModule,
+    RolesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
