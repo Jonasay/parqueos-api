@@ -1,118 +1,130 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+API Gestión de Parqueos 
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Universidad Mesoamericana Quetzaltenango (UMES)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Facultad de Ingeniería - Técnico en Desarrollo de Software
 
-## Description
+Curso: Arquitectura de Sistemas - Proyecto Final
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+-Descripción General
 
-## Project setup
+Esta API RESTful proporciona el backend robusto para un sistema integral de gestión de parqueos. El proyecto cumple con el requerimiento de una estructura relacional con 16 tablas.
+El sistema gestiona desde la configuración física de sucursales, niveles, espacios y catálogos de cobro como tarifas, métodos de pago, hasta la operación transaccional de clientes, vehículos, pensiones, tickets, pagos y facturación, incluyendo un sistema de auditoría (logs) y roles de usuario.
 
-```bash
-$ npm install
-```
+- Arquitectura del Sistema
 
-## Compile and run the project
+El proyecto está construido utilizando NestJS y aplica los principios Arquitectura Limpi) y separación de capas:
 
-```bash
-# development
-$ npm run start
+Capa de Presentación (Controladores): Manejo de rutas, validación inicial con DTOs y documentación automatizada con Swagger. Ningún endpoint está expuesto sin protección.
 
-# watch mode
-$ npm run start:dev
+Capa de Lógica de Negocio (Servicios): Reglas operativas, validaciones de unicidad y manejo estricto de códigos HTTP semánticos (400, 401, 403, 404, 422, 500).
 
-# production mode
-$ npm run start:prod
-```
+Capa de Acceso a Datos (Repositorios y ORM): Implementación del Patrón Repositorio utilizando interfaces abstractas. Se utiliza Prisma ORM para interactuar con PostgreSQL, garantizando cero consultas SQL en crudo.
 
-## Run tests
+Integración SOA (Proxy de Autenticación): El módulo de autenticación funciona como un API Gateway ligero que se comunica de forma segura con un microservicio externo para la validación de credenciales y emisión de JWT.
 
-```bash
-# unit tests
-$ npm run test
+- Tecnologías Utilizadas
 
-# e2e tests
-$ npm run test:e2e
+Framework: NestJS (Node.js)
 
-# test coverage
-$ npm run test:cov
-```
+Lenguaje: TypeScript
 
-## Deployment
+Base de Datos: PostgreSQL
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+ORM: Prisma
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Autenticación: JWT (JSON Web Tokens)
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+Documentación: Swagger (OpenAPI)
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Testing: Jest (con inyección de Mocks)
 
-## Observability
+- Instrucciones para Levantar el Proyecto
 
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
+Sigue estos pasos para ejecutar la API en tu entorno local:
 
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
+1. Prerrequisitos
 
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
+Node.js (v18 o superior)
 
-This project is already instrumented. Create a free account at [observe.nestjs.com](https://observe.nestjs.com), add an application, and paste the generated app key and secret into the `ObserveModule.forRoot()` call in `src/app.module.ts`.
+PostgreSQL (Instalado y en ejecución)
 
-The free plan needs no payment details and covers 300,000 events a month. You can also browse the [live demo](https://www.observe-demo.nestjs.com/dashboard) first - the whole dashboard over a busy service's data, with nothing to install.
+Git
 
-## Resources
+2. Clonar el repositorio y configurar dependencias
 
-Check out a few resources that may come in handy when working with NestJS:
+git clone <tu-url-del-repositorio>
+cd <nombre-de-la-carpeta>
+npm install
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observe](https://observe.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
 
-## Support
+3. Configurar Variables de Entorno
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Crea un archivo .env en la raíz del proyecto basándote en el archivo de ejemplo:
 
-## Stay in touch
+# Conexión a la base de datos PostgreSQL local o en la nube
+DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/db_parqueos?schema=public"
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Integración SOA API externa de Autenticación
+EXTERNAL_API_URL="https://apilogin-qh0o.onrender.com"
+JWT_SECRET="LoginParqueo_2026_JVC_KEY"
 
-## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+(Asegúrate de cambiar las credenciales de DATABASE_URL por las de tu servidor PostgreSQL).
+
+4. Sincronizar la Base de Datos
+
+Sincroniza el esquema de Prisma con tu base de datos para generar las 16 tablas automáticamente:
+
+npx prisma db push
+npx prisma generate
+
+
+5. Ejecutar la Aplicación
+
+npm run start:dev
+
+
+La API estará corriendo en: http://localhost:3000
+
+- Instrucciones para Probar los Endpoints Individualmente
+
+La API está completamente documentada con Swagger. Para interactuar con ella y probar los endpoints:
+
+Levanta el proyecto (npm run start:dev).
+
+Abre tu navegador e ingresa a: http://localhost:3000/api/docs 
+
+Obtener un Token:
+
+Ve a la sección Autenticación (Proxy SOA).
+
+Usa el endpoint POST /api/auth/login con credenciales válidas.
+
+Copia el token JWT devuelto en la respuesta.
+
+Autorizar Swagger:
+
+Haz clic en el botón verde "Authorize" en la parte superior derecha de la interfaz de Swagger.
+
+Pega el token JWT y haz clic en "Authorize".
+
+Probar Módulos:
+
+Ahora puedes probar cualquier endpoint protegido (ej. Crear una Sucursal, Registrar un Vehículo, Emitir un Ticket).
+
+La interfaz de Swagger indica claramente el formato del JSON (DTO) requerido para cada petición.
+
+- Pruebas Unitarias con Mocks
+
+El proyecto incluye una suite de pruebas unitarias robusta, evaluando aisladamente la capa de servicios inyectando mocks del repositorio (aislando completamente la base de datos). Existen 5 pruebas unitarias por cada módulo, garantizando el correcto manejo de excepciones.
+
+Para ejecutar la suite de pruebas:
+
+npm run test
+
+
+Para ver la cobertura de las pruebas:
+
+npm run test:cov
+
