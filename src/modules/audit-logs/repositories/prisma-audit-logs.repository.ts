@@ -1,0 +1,24 @@
+import { Injectable } from '@nestjs/common';
+import { IAuditLogsRepository } from './audit-logs.repository.interface.js';
+import { PrismaService } from '../../../prisma/prisma.service.js';
+import { AuditLog } from '@prisma/client';
+
+@Injectable()
+export class PrismaAuditLogsRepository implements IAuditLogsRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async crear(datos: any): Promise<AuditLog> {
+    return this.prisma.auditLog.create({ data: datos });
+  }
+
+  async obtenerTodos(): Promise<AuditLog[]> {
+    return this.prisma.auditLog.findMany({ include: { usuario: true }, orderBy: { fecha_hora: 'desc' } });
+  }
+
+  async buscarPorUsuario(usuarioId: number): Promise<AuditLog[]> {
+    return this.prisma.auditLog.findMany({
+      where: { usuario_id: usuarioId },
+      orderBy: { fecha_hora: 'desc' },
+    });
+  }
+}
