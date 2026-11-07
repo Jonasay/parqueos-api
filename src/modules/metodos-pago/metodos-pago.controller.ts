@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { MetodosPagoService } from './metodos-pago.service.js';
 import { CrearMetodoPagoDto } from './dto/crear-metodo-pago.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -29,5 +29,13 @@ export class MetodosPagoController {
   @ApiOperation({ summary: 'Busca un método de pago por su ID' })
   async buscarPorId(@Param('id', ParseIntPipe) id: number) {
     return this.metodosPagoService.buscarPorId(id);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Elimina un método de pago por su ID' })
+  @ApiResponse({ status: 200, description: 'Método de pago eliminado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Método de pago no encontrado.' })
+  async eliminar(@Param('id', ParseIntPipe) id: number) {
+    return this.metodosPagoService.eliminarMetodo(id);
   }
 }

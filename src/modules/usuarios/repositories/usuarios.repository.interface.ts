@@ -6,4 +6,5 @@ export interface IUsuariosRepository {
   crear(datos: any): Promise<Usuario>;
   buscarPorEmail(email: string): Promise<Usuario | null>;
   obtenerTodos(): Promise<Usuario[]>;
+  eliminar(email: string): Promise<Usuario>;
 }

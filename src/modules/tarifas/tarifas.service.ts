@@ -28,4 +28,9 @@ export class TarifasService {
     }
     return tarifa;
   }
+
+  async eliminarTarifa(tipoVehiculoId: number) {
+    const tarifa = await this.buscarTarifaActiva(tipoVehiculoId);
+    return this.tarifasRepository.eliminar(tarifa.id);
+  }
 }

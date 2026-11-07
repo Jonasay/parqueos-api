@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { AUDIT_LOGS_REPOSITORY } from './repositories/audit-logs.repository.interface.js';
 import type { IAuditLogsRepository } from './repositories/audit-logs.repository.interface.js';
 
@@ -22,5 +22,13 @@ export class AuditLogsService {
 
   async obtenerHistorialPorUsuario(usuarioId: number) {
     return this.auditLogsRepository.buscarPorUsuario(usuarioId);
+  }
+
+  async eliminarLog(usuarioId: number) {
+    const logs = await this.auditLogsRepository.buscarPorUsuario(usuarioId);
+    if (!logs || logs.length === 0) {
+      throw new NotFoundException(`No existen registros de auditoría para el usuario con ID ${usuarioId}.`);
+    }
+    return this.auditLogsRepository.eliminarPorUsuario(usuarioId);
   }
 }

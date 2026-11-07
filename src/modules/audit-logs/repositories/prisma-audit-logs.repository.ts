@@ -21,4 +21,11 @@ export class PrismaAuditLogsRepository implements IAuditLogsRepository {
       orderBy: { fecha_hora: 'desc' },
     });
   }
+
+  async eliminarPorUsuario(usuarioId: number): Promise<any> {
+    return this.prisma.auditLog.updateMany({
+      where: { usuario_id: usuarioId },
+      data: { activo: false },
+    });
+  }
 }

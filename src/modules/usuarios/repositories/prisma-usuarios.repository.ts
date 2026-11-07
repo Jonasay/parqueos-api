@@ -20,4 +20,11 @@ export class PrismaUsuariosRepository implements IUsuariosRepository {
       include: { rol: true, empleado: true }
     });
   }
+
+  async eliminar(email: string): Promise<Usuario> {
+    return this.prisma.usuario.update({
+      where: { email },
+      data: { estado: 'INACTIVO', activo: false },
+    });
+  }
 }

@@ -33,4 +33,9 @@ export class PensionesService {
     }
     return pension;
   }
+
+  async eliminarPension(vehiculoId: number) {
+    const pension = await this.verificarAcceso(vehiculoId);
+    return this.pensionesRepository.eliminar(pension.id);
+  }
 }

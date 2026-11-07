@@ -28,4 +28,9 @@ export class RolesService {
     }
     return rol;
   }
+
+  async eliminarRol(id: number) {
+    await this.buscarPorId(id);
+    return this.rolesRepository.eliminar(id);
+  }
 }

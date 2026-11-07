@@ -29,4 +29,9 @@ export class EstadosEspacioService {
     }
     return estado;
   }
+
+  async eliminarEstado(id: number) {
+    await this.buscarPorId(id);
+    return this.estadosEspacioRepository.eliminar(id);
+  }
 }

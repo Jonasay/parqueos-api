@@ -18,4 +18,11 @@ export class PrismaClientesRepository implements IClientesRepository {
   async obtenerTodos(): Promise<Cliente[]> {
     return this.prisma.cliente.findMany();
   }
+
+  async eliminar(usuarioId: number): Promise<Cliente> {
+    return this.prisma.cliente.update({
+      where: { usuario_id: usuarioId },
+      data: { activo: false },
+    });
+  }
 }

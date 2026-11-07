@@ -36,4 +36,12 @@ export class PagosService {
 
     return pagoRealizado;
   }
+
+  async eliminarPago(ticketId: number) {
+    const ticket = await this.pagosRepository.obtenerTicketPorId(ticketId);
+    if (!ticket) {
+      throw new NotFoundException(`El ticket con ID ${ticketId} no existe.`);
+    }
+    return this.pagosRepository.eliminarPorTicketId(ticketId);
+  }
 }

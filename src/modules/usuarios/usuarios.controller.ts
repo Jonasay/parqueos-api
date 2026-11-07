@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service.js';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -23,5 +23,13 @@ export class UsuariosController {
   @ApiOperation({ summary: 'Lista todos los usuarios con sus roles y perfiles' })
   async obtenerTodos() {
     return this.usuariosService.obtenerTodos();
+  }
+
+  @Delete(':email')
+  @ApiOperation({ summary: 'Elimina lógicamente un usuario por su email' })
+  @ApiResponse({ status: 200, description: 'Usuario archivado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
+  async eliminar(@Param('email') email: string) {
+    return this.usuariosService.eliminarUsuario(email);
   }
 }

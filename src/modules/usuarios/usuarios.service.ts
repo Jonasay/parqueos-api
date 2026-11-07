@@ -20,4 +20,12 @@ export class UsuariosService {
   async obtenerTodos() {
     return this.usuariosRepository.obtenerTodos();
   }
+
+  async eliminarUsuario(email: string) {
+    const usuario = await this.usuariosRepository.buscarPorEmail(email);
+    if (!usuario) {
+      throw new NotFoundException(`El usuario con email ${email} no existe.`);
+    }
+    return this.usuariosRepository.eliminar(email);
+  }
 }

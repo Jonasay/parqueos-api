@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { VehiculosService } from './vehiculos.service.js';
 import { CrearVehiculoDto } from './dto/crear-vehiculo.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -31,5 +31,13 @@ export class VehiculosController {
   @ApiResponse({ status: 404, description: 'Vehículo no encontrado.' })
   async buscarPorPlaca(@Param('placa') placa: string) {
     return this.vehiculosService.buscarPorPlaca(placa);
+  }
+
+  @Delete(':placa')
+  @ApiOperation({ summary: 'Elimina lógicamente un vehículo por su placa' })
+  @ApiResponse({ status: 200, description: 'Vehículo archivado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Vehículo no encontrado.' })
+  async eliminar(@Param('placa') placa: string) {
+    return this.vehiculosService.eliminarVehiculo(placa);
   }
 }

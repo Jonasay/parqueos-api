@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { PagosService } from './pagos.service.js';
 import { CrearPagoDto } from './dto/crear-pago.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -18,5 +18,13 @@ export class PagosController {
   @ApiResponse({ status: 422, description: 'Ticket ya pagado.' })
   async registrarPago(@Body() crearPagoDto: CrearPagoDto) {
     return this.pagosService.procesarPago(crearPagoDto);
+  }
+
+  @Delete('ticket/:ticketId')
+  @ApiOperation({ summary: 'Elimina lógicamente el pago asociado a un ticket' })
+  @ApiResponse({ status: 200, description: 'Pago archivado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Ticket no encontrado.' })
+  async eliminar(@Param('ticketId', ParseIntPipe) ticketId: number) {
+    return this.pagosService.eliminarPago(ticketId);
   }
 }

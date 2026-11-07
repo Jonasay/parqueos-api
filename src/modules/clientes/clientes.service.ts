@@ -28,4 +28,9 @@ export class ClientesService {
   async obtenerTodos() {
     return this.clientesRepository.obtenerTodos();
   }
+
+  async eliminarCliente(usuarioId: number) {
+    await this.buscarPorUsuarioId(usuarioId);
+    return this.clientesRepository.eliminar(usuarioId);
+  }
 }

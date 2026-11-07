@@ -10,6 +10,7 @@ datasource db {
 model Rol {
   id       Int       @id @default(autoincrement())
   nombre   String    @unique @db.VarChar(50)
+  activo   Boolean   @default(true)
   usuarios Usuario[]
 
   @@map("roles")
@@ -20,6 +21,7 @@ model Usuario {
   email         String      @unique @db.VarChar(150)
   password_hash String
   estado        String      @db.VarChar(20)
+  activo        Boolean     @default(true)
   rol_id        Int
   rol           Rol         @relation(fields: [rol_id], references: [id])
   empleado      Empleado?
@@ -36,6 +38,7 @@ model Empleado {
   numero_igss     String?   @db.VarChar(30)
   codigo_empleado String?   @db.VarChar(30)
   turno_asignado  String?   @db.VarChar(50)
+  activo          Boolean   @default(true)
   usuario         Usuario   @relation(fields: [usuario_id], references: [id])
   tickets         Ticket[]
 
@@ -48,6 +51,7 @@ model Cliente {
   nit_facturacion    String?    @db.VarChar(30)
   nombre_facturacion String?    @db.VarChar(150)
   telefono           String?    @db.VarChar(30)
+  activo             Boolean    @default(true)
   usuario            Usuario    @relation(fields: [usuario_id], references: [id])
   vehiculos          Vehiculo[]
 
@@ -60,6 +64,7 @@ model Sucursal {
   direccion         String
   telefono_contacto String?         @db.VarChar(30)
   capacidad_maxima  Int
+  activo            Boolean         @default(true)
   niveles_parqueo   NivelParqueo[]
 
   @@map("sucursales")
@@ -69,6 +74,7 @@ model NivelParqueo {
   id               Int               @id @default(autoincrement())
   sucursal_id      Int
   nombre_nivel     String            @db.VarChar(100)
+  activo           Boolean           @default(true)
   sucursal         Sucursal          @relation(fields: [sucursal_id], references: [id])
   espacios_parqueo EspacioParqueo[]
 
@@ -78,6 +84,7 @@ model NivelParqueo {
 model EstadoEspacio {
   id               Int               @id @default(autoincrement())
   nombre           String            @unique @db.VarChar(50)
+  activo           Boolean           @default(true)
   espacios_parqueo EspacioParqueo[]
 
   @@map("estados_espacio")
@@ -86,6 +93,7 @@ model EstadoEspacio {
 model TipoVehiculo {
   id               Int               @id @default(autoincrement())
   nombre           String            @unique @db.VarChar(100)
+  activo           Boolean           @default(true)
   espacios_parqueo EspacioParqueo[]
   tarifas          Tarifa[]
 
@@ -98,6 +106,7 @@ model EspacioParqueo {
   estado_id        Int
   tipo_vehiculo_id Int
   es_techado       Boolean       @default(false)
+  activo           Boolean       @default(true)
   nivel            NivelParqueo  @relation(fields: [nivel_id], references: [id])
   estado           EstadoEspacio @relation(fields: [estado_id], references: [id])
   tipo_vehiculo    TipoVehiculo  @relation(fields: [tipo_vehiculo_id], references: [id])
@@ -112,6 +121,7 @@ model Vehiculo {
   color      String?    @db.VarChar(50)
   marca      String?    @db.VarChar(100)
   cliente_id Int?
+  activo     Boolean    @default(true)
   cliente    Cliente?   @relation(fields: [cliente_id], references: [id])
   tickets    Ticket[]
   pensiones  Pension[]
@@ -128,6 +138,7 @@ model Ticket {
   hora_salida         DateTime?      @db.Timestamp()
   empleado_ingreso_id Int
   estado              String         @db.VarChar(20)
+  activo              Boolean        @default(true)
   vehiculo            Vehiculo       @relation(fields: [vehiculo_id], references: [id])
   espacio             EspacioParqueo @relation(fields: [espacio_id], references: [id])
   empleado_ingreso    Empleado       @relation(fields: [empleado_ingreso_id], references: [id])
@@ -142,6 +153,7 @@ model Pension {
   fecha_inicio DateTime @db.Date
   fecha_fin   DateTime? @db.Date
   estado_pago String   @db.VarChar(50)
+  activo      Boolean  @default(true)
   vehiculo    Vehiculo @relation(fields: [vehiculo_id], references: [id])
 
   @@map("pensiones")
@@ -152,14 +164,16 @@ model Tarifa {
   tipo_vehiculo_id Int
   monto            Decimal      @db.Decimal(10, 2)
   tipo_cobro       String       @db.VarChar(50)
+  estado_activo    Boolean      @default(true)
   tipo_vehiculo    TipoVehiculo @relation(fields: [tipo_vehiculo_id], references: [id])
 
   @@map("tarifas")
 }
 
 model MetodoPago {
-  id     Int    @id @default(autoincrement())
-  nombre String @unique @db.VarChar(100)
+  id     Int     @id @default(autoincrement())
+  nombre String  @unique @db.VarChar(100)
+  activo Boolean @default(true)
   pagos  Pago[]
 
   @@map("metodos_pago")
@@ -173,6 +187,7 @@ model Pago {
   fecha_pago          DateTime   @db.Timestamp()
   numero_autorizacion String?    @db.VarChar(100)
   requiere_fel        Boolean    @default(false)
+  activo              Boolean    @default(true)
   ticket              Ticket     @relation(fields: [ticket_id], references: [id])
   metodo_pago         MetodoPago @relation(fields: [metodo_pago_id], references: [id])
 
@@ -185,6 +200,7 @@ model AuditLog {
   accion     String   @db.VarChar(255)
   fecha_hora DateTime @db.Timestamp()
   detalles   Json?
+  activo     Boolean  @default(true)
   usuario    Usuario  @relation(fields: [usuario_id], references: [id])
 
   @@map("audit_logs")

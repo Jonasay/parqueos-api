@@ -20,4 +20,11 @@ export class PrismaTarifasRepository implements ITarifasRepository {
   async obtenerTodas(): Promise<Tarifa[]> {
     return this.prisma.tarifa.findMany({ include: { tipo_vehiculo: true } });
   }
+
+  async eliminar(id: number): Promise<Tarifa> {
+    return this.prisma.tarifa.update({
+      where: { id },
+      data: { estado_activo: false },
+    });
+  }
 }

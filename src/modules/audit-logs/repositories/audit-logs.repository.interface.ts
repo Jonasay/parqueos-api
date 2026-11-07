@@ -6,4 +6,5 @@ export interface IAuditLogsRepository {
   crear(datos: any): Promise<AuditLog>;
   obtenerTodos(): Promise<AuditLog[]>;
   buscarPorUsuario(usuarioId: number): Promise<AuditLog[]>;
+  eliminarPorUsuario(usuarioId: number): Promise<any>;
 }

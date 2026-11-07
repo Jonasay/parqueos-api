@@ -29,4 +29,8 @@ export class PrismaNivelesParqueoRepository implements INivelesParqueoRepository
       where: { sucursal_id: sucursalId },
     });
   }
+
+  async eliminar(id: number): Promise<NivelParqueo> {
+    return this.prisma.nivelParqueo.update({ where: { id }, data: { activo: false } });
+  }
 }

@@ -7,4 +7,5 @@ export interface IRolesRepository {
   buscarPorNombre(nombre: string): Promise<Rol | null>;
   buscarPorId(id: number): Promise<Rol | null>;
   obtenerTodos(): Promise<Rol[]>;
+  eliminar(id: number): Promise<Rol>;
 }
