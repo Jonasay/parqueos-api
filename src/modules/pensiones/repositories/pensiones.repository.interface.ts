@@ -6,4 +6,5 @@ export interface IPensionesRepository {
   crear(datos: any): Promise<Pension>;
   buscarActivaPorVehiculo(vehiculoId: number, fechaActual: Date): Promise<Pension | null>;
   obtenerTodas(): Promise<Pension[]>;
+  eliminar(id: number): Promise<Pension>;
 }

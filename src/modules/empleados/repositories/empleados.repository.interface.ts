@@ -7,4 +7,5 @@ export interface IEmpleadosRepository {
   buscarPorUsuarioId(usuarioId: number): Promise<Empleado | null>;
   buscarPorDpi(dpi: string): Promise<Empleado | null>;
   obtenerTodos(): Promise<Empleado[]>;
+  eliminar(usuarioId: number): Promise<Empleado>;
 }

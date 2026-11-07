@@ -28,4 +28,9 @@ export class MetodosPagoService {
     }
     return metodo;
   }
+
+  async eliminarMetodo(id: number) {
+    await this.buscarPorId(id);
+    return this.metodosPagoRepository.eliminar(id);
+  }
 }

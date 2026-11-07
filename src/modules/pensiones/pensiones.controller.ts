@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { PensionesService } from './pensiones.service.js';
 import { CrearPensionDto } from './dto/crear-pension.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -31,5 +31,13 @@ export class PensionesController {
   @ApiResponse({ status: 404, description: 'Sin pensión activa.' })
   async verificarAcceso(@Param('id', ParseIntPipe) id: number) {
     return this.pensionesService.verificarAcceso(id);
+  }
+
+  @Delete('vehiculo/:id')
+  @ApiOperation({ summary: 'Elimina lógicamente la pensión activa de un vehículo' })
+  @ApiResponse({ status: 200, description: 'Pensión archivada exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Pensión activa no encontrada.' })
+  async eliminar(@Param('id', ParseIntPipe) id: number) {
+    return this.pensionesService.eliminarPension(id);
   }
 }

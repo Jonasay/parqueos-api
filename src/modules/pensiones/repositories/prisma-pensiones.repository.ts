@@ -27,4 +27,11 @@ export class PrismaPensionesRepository implements IPensionesRepository {
       include: { cliente: true, vehiculo: true, tarifa: true },
     });
   }
+
+  async eliminar(id: number): Promise<Pension> {
+    return this.prisma.pension.update({
+      where: { id },
+      data: { estado: 'INACTIVA', activo: false },
+    });
+  }
 }

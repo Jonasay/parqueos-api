@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { EspaciosService } from './espacios.service.js';
 import { CrearEspacioDto } from './dto/crear-espacio.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -34,5 +34,13 @@ export class EspaciosController {
   @ApiResponse({ status: 404, description: 'El espacio solicitado no existe.' })
   async buscarPorId(@Param('id', ParseIntPipe) id: number) {
     return this.espaciosService.buscarPorId(id);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Elimina un espacio de parqueo por su ID' })
+  @ApiResponse({ status: 200, description: 'Espacio eliminado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'El espacio solicitado no existe.' })
+  async eliminar(@Param('id', ParseIntPipe) id: number) {
+    return this.espaciosService.eliminarEspacio(id);
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { ClientesService } from './clientes.service.js';
 import { CrearClienteDto } from './dto/crear-cliente.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -31,5 +31,13 @@ export class ClientesController {
   @ApiResponse({ status: 404, description: 'Cliente no encontrado.' })
   async buscarPorUsuarioId(@Param('usuarioId', ParseIntPipe) usuarioId: number) {
     return this.clientesService.buscarPorUsuarioId(usuarioId);
+  }
+
+  @Delete(':usuarioId')
+  @ApiOperation({ summary: 'Elimina lógicamente un cliente por su ID de usuario' })
+  @ApiResponse({ status: 200, description: 'Cliente archivado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Cliente no encontrado.' })
+  async eliminar(@Param('usuarioId', ParseIntPipe) usuarioId: number) {
+    return this.clientesService.eliminarCliente(usuarioId);
   }
 }

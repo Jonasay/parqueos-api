@@ -32,4 +32,11 @@ export class PrismaTicketsRepository implements ITicketsRepository {
       data: { hora_salida: horaSalida, estado: 'FINALIZADO' },
     });
   }
+
+  async eliminar(codigoTicket: string): Promise<Ticket> {
+    return this.prisma.ticket.update({
+      where: { codigo_ticket: codigoTicket },
+      data: { estado: 'INACTIVO', activo: false },
+    });
+  }
 }

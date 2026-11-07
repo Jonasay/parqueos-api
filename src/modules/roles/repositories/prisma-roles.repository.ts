@@ -22,4 +22,8 @@ export class PrismaRolesRepository implements IRolesRepository {
   async obtenerTodos(): Promise<Rol[]> {
     return this.prisma.rol.findMany();
   }
+
+  async eliminar(id: number): Promise<Rol> {
+    return this.prisma.rol.update({ where: { id }, data: { activo: false } });
+  }
 }

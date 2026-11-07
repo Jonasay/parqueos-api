@@ -22,4 +22,8 @@ export class PrismaTiposVehiculoRepository implements ITiposVehiculoRepository {
   async obtenerTodos(): Promise<TipoVehiculo[]> {
     return this.prisma.tipoVehiculo.findMany();
   }
+
+  async eliminar(id: number): Promise<TipoVehiculo> {
+    return this.prisma.tipoVehiculo.update({ where: { id }, data: { activo: false } });
+  }
 }

@@ -22,4 +22,11 @@ export class PrismaEmpleadosRepository implements IEmpleadosRepository {
   async obtenerTodos(): Promise<Empleado[]> {
     return this.prisma.empleado.findMany({ include: { usuario: true } });
   }
+
+  async eliminar(usuarioId: number): Promise<Empleado> {
+    return this.prisma.empleado.update({
+      where: { usuario_id: usuarioId },
+      data: { activo: false },
+    });
+  }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { TarifasService } from './tarifas.service.js';
 import { CrearTarifaDto } from './dto/crear-tarifa.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -29,5 +29,13 @@ export class TarifasController {
   @ApiOperation({ summary: 'Busca la tarifa activa por ID de tipo de vehículo' })
   async buscarPorTipoVehiculo(@Param('id', ParseIntPipe) id: number) {
     return this.tarifasService.buscarTarifaActiva(id);
+  }
+
+  @Delete('vehiculo/:id')
+  @ApiOperation({ summary: 'Elimina lógicamente la tarifa activa por ID de tipo de vehículo' })
+  @ApiResponse({ status: 200, description: 'Tarifa archivada exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Tarifa no encontrada.' })
+  async eliminar(@Param('id', ParseIntPipe) id: number) {
+    return this.tarifasService.eliminarTarifa(id);
   }
 }

@@ -6,4 +6,5 @@ export interface IEspaciosRepository {
   crear(datos: any): Promise<EspacioParqueo>;
   obtenerDisponibles(): Promise<EspacioParqueo[]>;
   buscarPorId(id: number): Promise<EspacioParqueo | null>;
+  eliminar(id: number): Promise<EspacioParqueo>;
 }

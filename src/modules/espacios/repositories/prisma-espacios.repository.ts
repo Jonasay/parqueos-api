@@ -21,4 +21,8 @@ export class PrismaEspaciosRepository implements IEspaciosRepository {
   async buscarPorId(id: number): Promise<EspacioParqueo | null> {
     return this.prisma.espacioParqueo.findUnique({ where: { id } });
   }
+
+  async eliminar(id: number): Promise<EspacioParqueo> {
+    return this.prisma.espacioParqueo.update({ where: { id }, data: { activo: false } });
+  }
 }

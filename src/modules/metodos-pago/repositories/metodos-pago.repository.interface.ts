@@ -7,4 +7,5 @@ export interface IMetodosPagoRepository {
   buscarPorNombre(nombre: string): Promise<MetodoPago | null>;
   buscarPorId(id: number): Promise<MetodoPago | null>;
   obtenerTodos(): Promise<MetodoPago[]>;
+  eliminar(id: number): Promise<MetodoPago>;
 }

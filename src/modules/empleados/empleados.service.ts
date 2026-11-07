@@ -34,4 +34,12 @@ export class EmpleadosService {
     }
     return empleado;
   }
+
+  async eliminarEmpleado(usuarioId: number) {
+    const empleado = await this.empleadosRepository.buscarPorUsuarioId(usuarioId);
+    if (!empleado) {
+      throw new NotFoundException(`Empleado con usuario ID ${usuarioId} no encontrado.`);
+    }
+    return this.empleadosRepository.eliminar(usuarioId);
+  }
 }

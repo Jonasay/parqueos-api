@@ -24,4 +24,9 @@ export class EspaciosService {
     }
     return espacio;
   }
+
+  async eliminarEspacio(id: number) {
+    await this.buscarPorId(id);
+    return this.espaciosRepository.eliminar(id);
+  }
 }

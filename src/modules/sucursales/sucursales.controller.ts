@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { SucursalesService } from './sucursales.service.js';
 import { CrearSucursalDto } from './dto/crear-sucursal.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -31,5 +31,13 @@ export class SucursalesController {
   @ApiResponse({ status: 404, description: 'Sucursal no encontrada.' })
   async buscarPorId(@Param('id', ParseIntPipe) id: number) {
     return this.sucursalesService.buscarPorId(id);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Elimina una sucursal por su ID' })
+  @ApiResponse({ status: 200, description: 'Sucursal eliminada exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Sucursal no encontrada.' })
+  async eliminar(@Param('id', ParseIntPipe) id: number) {
+    return this.sucursalesService.eliminarSucursal(id);
   }
 }

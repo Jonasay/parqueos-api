@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { EmpleadosService } from './empleados.service.js';
 import { CrearEmpleadoDto } from './dto/crear-empleado.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -31,5 +31,13 @@ export class EmpleadosController {
   @ApiResponse({ status: 404, description: 'Empleado no encontrado.' })
   async buscarPorDpi(@Param('dpi') dpi: string) {
     return this.empleadosService.buscarPorDpi(dpi);
+  }
+
+  @Delete(':usuarioId')
+  @ApiOperation({ summary: 'Elimina lógicamente un empleado por su ID de usuario' })
+  @ApiResponse({ status: 200, description: 'Empleado archivado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Empleado no encontrado.' })
+  async eliminar(@Param('usuarioId', ParseIntPipe) usuarioId: number) {
+    return this.empleadosService.eliminarEmpleado(usuarioId);
   }
 }

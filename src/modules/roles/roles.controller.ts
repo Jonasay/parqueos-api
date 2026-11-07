@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { RolesService } from './roles.service.js';
 import { CrearRolDto } from './dto/crear-rol.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -29,5 +29,13 @@ export class RolesController {
   @ApiOperation({ summary: 'Busca un rol específico por su ID' })
   async buscarPorId(@Param('id', ParseIntPipe) id: number) {
     return this.rolesService.buscarPorId(id);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Elimina un rol por su ID' })
+  @ApiResponse({ status: 200, description: 'Rol eliminado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Rol no encontrado.' })
+  async eliminar(@Param('id', ParseIntPipe) id: number) {
+    return this.rolesService.eliminarRol(id);
   }
 }

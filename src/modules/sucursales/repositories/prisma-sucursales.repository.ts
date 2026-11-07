@@ -25,4 +25,8 @@ export class PrismaSucursalesRepository implements ISucursalesRepository {
       include: { niveles_parqueo: true } 
     });
   }
+
+  async eliminar(id: number): Promise<Sucursal> {
+    return this.prisma.sucursal.update({ where: { id }, data: { activo: false } });
+  }
 }

@@ -21,4 +21,11 @@ export class PrismaPagosRepository implements IPagosRepository {
       data: { estado: 'PAGADO' },
     });
   }
+
+  async eliminarPorTicketId(ticketId: number): Promise<any> {
+    return this.prisma.pago.updateMany({
+      where: { ticket_id: ticketId },
+      data: { activo: false },
+    });
+  }
 }

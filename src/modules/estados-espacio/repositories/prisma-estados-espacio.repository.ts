@@ -22,4 +22,8 @@ export class PrismaEstadosEspacioRepository implements IEstadosEspacioRepository
   async obtenerTodos(): Promise<EstadoEspacio[]> {
     return this.prisma.estadoEspacio.findMany();
   }
+
+  async eliminar(id: number): Promise<EstadoEspacio> {
+    return this.prisma.estadoEspacio.update({ where: { id }, data: { activo: false } });
+  }
 }

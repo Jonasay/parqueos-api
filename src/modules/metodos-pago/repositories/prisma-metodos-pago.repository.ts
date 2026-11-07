@@ -21,4 +21,8 @@ export class PrismaMetodosPagoRepository implements IMetodosPagoRepository {
   async obtenerTodos(): Promise<MetodoPago[]> {
     return this.prisma.metodoPago.findMany();
   }
+
+  async eliminar(id: number): Promise<MetodoPago> {
+    return this.prisma.metodoPago.update({ where: { id }, data: { activo: false } });
+  }
 }

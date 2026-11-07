@@ -29,4 +29,9 @@ export class VehiculosService {
   async obtenerTodos() {
     return this.vehiculosRepository.obtenerTodos();
   }
+
+  async eliminarVehiculo(placa: string) {
+    await this.buscarPorPlaca(placa);
+    return this.vehiculosRepository.eliminar(placa);
+  }
 }

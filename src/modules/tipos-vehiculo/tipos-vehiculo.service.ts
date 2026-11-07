@@ -28,4 +28,9 @@ export class TiposVehiculoService {
     }
     return tipo;
   }
+
+  async eliminarTipo(id: number) {
+    await this.buscarPorId(id);
+    return this.tiposVehiculoRepository.eliminar(id);
+  }
 }

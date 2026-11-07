@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { TicketsService } from './tickets.service.js';
@@ -30,5 +30,13 @@ export class TicketsController {
   @ApiResponse({ status: 404, description: 'Ticket no encontrado.' })
   async registrarSalida(@Param('codigo') codigo: string) {
     return this.ticketsService.procesarSalida(codigo);
+  }
+
+  @Delete(':codigo')
+  @ApiOperation({ summary: 'Elimina lógicamente un ticket por su código' })
+  @ApiResponse({ status: 200, description: 'Ticket archivado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Ticket no encontrado.' })
+  async eliminar(@Param('codigo') codigo: string) {
+    return this.ticketsService.eliminarTicket(codigo);
   }
 }

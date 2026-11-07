@@ -18,4 +18,11 @@ export class PrismaVehiculosRepository implements IVehiculosRepository {
   async obtenerTodos(): Promise<Vehiculo[]> {
     return this.prisma.vehiculo.findMany();
   }
+
+  async eliminar(placa: string): Promise<Vehiculo> {
+    return this.prisma.vehiculo.update({
+      where: { placa },
+      data: { activo: false },
+    });
+  }
 }
