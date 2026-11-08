@@ -1,12 +1,15 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
     
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message: string | object = 'Error interno del servidor';
@@ -27,6 +30,16 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         status = HttpStatus.NOT_FOUND;
         message = 'Registro no encontrado en la base de datos.';
       }
+    }
+
+    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
+      const details = exception instanceof Error
+        ? `${exception.name}: ${exception.message}`
+        : String(exception);
+      this.logger.error(
+        `${request.method} ${request.originalUrl} failed: ${details}`,
+        exception instanceof Error ? exception.stack : undefined,
+      );
     }
 
     response.status(status).json({
