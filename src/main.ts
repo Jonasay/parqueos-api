@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter.js';
 import { validateEnvironmentConfiguration } from './config/environment.js';
 import { Logger } from '@nestjs/common';
+import { error } from 'console';
 
 async function bootstrap() {
   validateEnvironmentConfiguration();
@@ -44,7 +45,8 @@ async function bootstrap() {
 }
 bootstrap().catch(() => {
   new Logger('Bootstrap').error(
-    'Application startup failed. Check required environment variables and database connectivity.',
+    'Application startup failed. Revisa el error exacto a continuación:',
+    error instanceof Error ? error.stack : error,
   );
   process.exitCode = 1;
 });
