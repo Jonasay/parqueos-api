@@ -1,11 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter.js';
 import { validateEnvironmentConfiguration } from './config/environment.js';
-import { Logger } from '@nestjs/common';
-import { error } from 'console';
+// ELIMINADO: import { error } from 'console';
 
 async function bootstrap() {
   validateEnvironmentConfiguration();
@@ -17,14 +16,12 @@ async function bootstrap() {
     credentials: true,
   });
 
-
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
     transform: true,
   }));
   app.useGlobalFilters(new GlobalExceptionFilter());
-
 
   const config = new DocumentBuilder()
     .setTitle('API Parqueos UMES')
@@ -39,14 +36,16 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-
   const port = process.env.PORT || 3000;
-  await app.listen(port);
+  // BINDING DE RED REQUERIDO EN NUBE: 0.0.0.0
+  await app.listen(port, '0.0.0.0');
 }
-bootstrap().catch(() => {
+
+// CAPTURA EXPLÍCITA DE LA VARIABLE "err"
+bootstrap().catch((err) => {
   new Logger('Bootstrap').error(
     'Application startup failed. Revisa el error exacto a continuación:',
-    error instanceof Error ? error.stack : error,
+    err instanceof Error ? err.stack : err,
   );
-  process.exitCode = 1;
+  process.exit(1); // Salida inmediata para que el orquestador de Render capture el fallo
 });
