@@ -68,6 +68,8 @@ describe('AuthService', () => {
     expect(prisma.usuario.create).toHaveBeenCalledWith({
       data: {
         email: 'operador@example.test',
+        nombre: null,
+        apellido: null,
         external_auth_id: '17',
         password_hash: null,
         estado: 'ACTIVO',
@@ -92,5 +94,62 @@ describe('AuthService', () => {
       service.loginProxy({ email: 'operador@example.test', password: 'wrong-password' }),
     ).rejects.toThrow(UnauthorizedException);
     expect(prisma.usuario.create).not.toHaveBeenCalled();
+  });
+
+  it('synchronizes a newly registered account and its name into Render', async () => {
+    post
+      .mockReturnValueOnce(of({ data: { ok: true, mensaje: 'Usuario registrado.' } }))
+      .mockReturnValueOnce(
+        of({
+          data: {
+            ok: true,
+            usuario: {
+              id: 21,
+              correo: 'jona@example.test',
+              rol: 2,
+              nombre: 'Jona',
+              apellido: 'Pérez',
+            },
+            token: 'signed-token',
+          },
+        }),
+      );
+    prisma.usuario.findUnique.mockResolvedValue(null);
+    prisma.rol.findUnique.mockResolvedValue({ id: 2 });
+    prisma.usuario.create.mockResolvedValue({
+      id: 9,
+      email: 'jona@example.test',
+      nombre: 'Jona',
+      apellido: 'Pérez',
+      rol_id: 2,
+      activo: true,
+      estado: 'ACTIVO',
+    });
+
+    await service.registroProxy({
+      nombre: 'Jona',
+      apellido: 'Pérez',
+      usuario: 'jona',
+      correo: 'jona@example.test',
+      password: 'password',
+    });
+
+    expect(post).toHaveBeenNthCalledWith(
+      2,
+      'https://auth.example.test/api/login',
+      { correo: 'jona@example.test', password: 'password' },
+      { headers: { 'x-api-key': 'test-api-key' } },
+    );
+    expect(prisma.usuario.create).toHaveBeenCalledWith({
+      data: {
+        email: 'jona@example.test',
+        nombre: 'Jona',
+        apellido: 'Pérez',
+        external_auth_id: '21',
+        password_hash: null,
+        estado: 'ACTIVO',
+        rol_id: 2,
+      },
+    });
   });
 });

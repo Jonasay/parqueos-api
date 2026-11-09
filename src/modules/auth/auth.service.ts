@@ -10,13 +10,15 @@ import { isAxiosError } from 'axios';
 import { LoginDto } from './dto/login.dto.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
 
-interface ExternalAuthUser {
+export interface ExternalAuthUser {
   id: number | string;
   correo: string;
   rol: number | string;
+  nombre?: string;
+  apellido?: string;
 }
 
-interface ExternalAuthResponse {
+export interface ExternalAuthResponse {
   ok?: boolean;
   mensaje?: string;
   usuario?: ExternalAuthUser;
@@ -36,12 +38,45 @@ export class AuthService {
   ) {}
 
   async loginProxy(credenciales: LoginDto) {
+    return this.authenticateAndSynchronize(credenciales.email, credenciales.password);
+  }
+
+  async registroProxy(datos: any) {
+    let response: ExternalAuthResponse;
+    try {
+      const resultado = await lastValueFrom(
+        this.httpService.post<ExternalAuthResponse>(
+          `${this.getExternalApiBaseUrl()}/api/registro`,
+          datos,
+          { headers: this.getExternalApiHeaders() },
+        )
+      );
+      response = resultado.data;
+    } catch {
+      throw new InternalServerErrorException('Fallo al registrar usuario en el servicio externo.');
+    }
+
+    if (!response?.ok) {
+      return response;
+    }
+
+    if (!datos?.correo || !datos?.password) {
+      throw new InternalServerErrorException(
+        'El registro externo fue exitoso, pero no se recibieron credenciales para sincronizar la cuenta en Render.',
+      );
+    }
+
+    await this.authenticateAndSynchronize(datos.correo, datos.password);
+    return response;
+  }
+
+  private async authenticateAndSynchronize(email: string, password: string) {
     let data: ExternalAuthResponse;
     try {
       const respuesta = await lastValueFrom(
         this.httpService.post<ExternalAuthResponse>(
           `${this.getExternalApiBaseUrl()}/api/login`,
-          { correo: credenciales.email, password: credenciales.password },
+          { correo: email, password },
           { headers: this.getExternalApiHeaders() },
         )
       );
@@ -53,7 +88,9 @@ export class AuthService {
       if (isAxiosError(error) && error.response?.status === 401) {
         throw new UnauthorizedException('Credenciales inválidas.');
       }
-      throw new InternalServerErrorException('Error de comunicación con el servicio externo de autenticación.');
+      throw new InternalServerErrorException(
+        'Error de comunicación con el servicio externo de autenticación.',
+      );
     }
 
     if (!data?.ok || !data.usuario) {
@@ -76,21 +113,6 @@ export class AuthService {
         rol: localUser.rol_id,
       },
     };
-  }
-
-  async registroProxy(datos: any) {
-    try {
-      const respuesta = await lastValueFrom(
-        this.httpService.post(
-          `${this.getExternalApiBaseUrl()}/api/registro`,
-          datos,
-          { headers: this.getExternalApiHeaders() },
-        )
-      );
-      return respuesta.data;
-    } catch {
-      throw new InternalServerErrorException('Fallo al registrar usuario en el servicio externo.');
-    }
   }
 
   private getExternalApiBaseUrl(): string {
@@ -132,10 +154,13 @@ export class AuthService {
     });
 
     if (localUser) {
-      if (localUser.email !== email) {
+      const profile: { email?: string; nombre?: string; apellido?: string } =
+        this.getProfileUpdates(localUser, externalUser);
+      if (localUser.email !== email) profile.email = email;
+      if (Object.keys(profile).length > 0) {
         return this.prisma.usuario.update({
           where: { id: localUser.id },
-          data: { email },
+          data: profile,
         });
       }
       return localUser;
@@ -151,7 +176,10 @@ export class AuthService {
 
       return this.prisma.usuario.update({
         where: { id: existingByEmail.id },
-        data: { external_auth_id: externalId },
+        data: {
+          external_auth_id: externalId,
+          ...this.getProfileUpdates(existingByEmail, externalUser),
+        },
       });
     }
 
@@ -165,11 +193,26 @@ export class AuthService {
     return this.prisma.usuario.create({
       data: {
         email,
+        nombre: externalUser.nombre?.trim() || null,
+        apellido: externalUser.apellido?.trim() || null,
         external_auth_id: externalId,
         password_hash: null,
         estado: 'ACTIVO',
         rol_id: roleId,
       },
     });
+  }
+
+  private getProfileUpdates(
+    localUser: { nombre: string | null; apellido: string | null },
+    externalUser: ExternalAuthUser,
+  ): { nombre?: string; apellido?: string } {
+    const updates: { nombre?: string; apellido?: string } = {};
+    const nombre = externalUser.nombre?.trim();
+    const apellido = externalUser.apellido?.trim();
+
+    if (nombre && nombre !== localUser.nombre) updates.nombre = nombre;
+    if (apellido && apellido !== localUser.apellido) updates.apellido = apellido;
+    return updates;
   }
 }
