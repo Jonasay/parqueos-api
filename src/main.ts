@@ -3,8 +3,11 @@ import { AppModule } from './app.module.js';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter.js';
+import { validateEnvironmentConfiguration } from './config/environment.js';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
+  validateEnvironmentConfiguration();
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
@@ -39,4 +42,9 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   await app.listen(port);
 }
-bootstrap();
+bootstrap().catch(() => {
+  new Logger('Bootstrap').error(
+    'Application startup failed. Check required environment variables and database connectivity.',
+  );
+  process.exitCode = 1;
+});

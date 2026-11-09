@@ -10,8 +10,22 @@ describe('TicketsService', () => {
   // Mock del Repositorio (Garantiza que NO tocamos la BD real)
   const mockTicketsRepository = {
     registrarEntrada: vi.fn(),
+    listar: vi.fn(),
     buscarPorCodigo: vi.fn(),
     actualizarSalida: vi.fn(),
+  };
+
+  const ticket = {
+    id: 1,
+    codigo_ticket: 'uuid-123',
+    vehiculo_id: 1,
+    espacio_id: 5,
+    hora_entrada: new Date('2026-11-09T10:00:00Z'),
+    hora_salida: null,
+    estado: 'ACTIVO',
+    activo: true,
+    vehiculo: { placa: 'P-123ABC' },
+    espacio: { id: 5 },
   };
 
   beforeEach(async () => {
@@ -35,27 +49,54 @@ describe('TicketsService', () => {
 
   // Prueba 1: Registro exitoso
   it('1. Debe registrar la entrada de un vehículo correctamente', async () => {
-    const mockTicket = { id: 1, codigo_ticket: 'uuid-123', estado: 'ACTIVO' };
     const datosEntrada = {
       vehiculoId: 1,
       espacioId: 5,
       usuarioId: 10,
     };
-    mockTicketsRepository.registrarEntrada.mockResolvedValue(mockTicket);
+    mockTicketsRepository.registrarEntrada.mockResolvedValue(ticket);
 
     const result = await service.registrarEntrada(datosEntrada);
-    expect(result).toEqual(mockTicket);
+    expect(result).toEqual({
+      id: 1,
+      codigo: 'uuid-123',
+      placa: 'P-123ABC',
+      espacio_id: 5,
+      hora_entrada: ticket.hora_entrada,
+      hora_salida: null,
+      estado: 'ACTIVO',
+    });
     expect(mockTicketsRepository.registrarEntrada).toHaveBeenCalledWith(datosEntrada);
+  });
+
+  it('lista tickets usando el contrato de Caja', async () => {
+    mockTicketsRepository.listar.mockResolvedValue([ticket]);
+
+    await expect(service.listar()).resolves.toEqual([
+      {
+        id: 1,
+        codigo: 'uuid-123',
+        placa: 'P-123ABC',
+        espacio_id: 5,
+        hora_entrada: ticket.hora_entrada,
+        hora_salida: null,
+        estado: 'ACTIVO',
+      },
+    ]);
   });
 
   // Prueba 2: Salida exitosa
   it('2. Debe procesar la salida de un ticket activo', async () => {
-    const mockTicket = { id: 1, codigo_ticket: 'uuid-123', estado: 'ACTIVO' };
-    mockTicketsRepository.buscarPorCodigo.mockResolvedValue(mockTicket);
-    mockTicketsRepository.actualizarSalida.mockResolvedValue({ ...mockTicket, estado: 'FINALIZADO' });
+    mockTicketsRepository.buscarPorCodigo.mockResolvedValue(ticket);
+    mockTicketsRepository.actualizarSalida.mockResolvedValue({
+      ...ticket,
+      hora_salida: new Date('2026-11-09T11:00:00Z'),
+      estado: 'FINALIZADO',
+    });
 
     const result = await service.procesarSalida('uuid-123');
     expect(result.estado).toBe('FINALIZADO');
+    expect(result.codigo).toBe('uuid-123');
     expect(mockTicketsRepository.buscarPorCodigo).toHaveBeenCalledWith('uuid-123');
   });
 

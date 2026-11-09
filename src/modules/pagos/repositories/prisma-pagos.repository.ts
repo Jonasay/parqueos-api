@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { UnprocessableEntityException } from '@nestjs/common';
 import { IPagosRepository } from './pagos.repository.interface.js';
 import { PrismaService } from '../../../prisma/prisma.service.js';
 import { Pago, Ticket } from '@prisma/client';
@@ -9,6 +10,28 @@ export class PrismaPagosRepository implements IPagosRepository {
 
   async registrarPago(datos: any): Promise<Pago> {
     return this.prisma.pago.create({ data: datos });
+  }
+
+  async registrarPagoYMarcarTicketComoPagado(datos: any): Promise<Pago> {
+    return this.prisma.$transaction(async (transaction) => {
+      const updated = await transaction.ticket.updateMany({
+        where: { id: datos.ticket_id, estado: 'FINALIZADO' },
+        data: { estado: 'PAGADO' },
+      });
+      if (updated.count !== 1) {
+        const ticket = await transaction.ticket.findUnique({
+          where: { id: datos.ticket_id },
+        });
+        if (ticket?.estado === 'PAGADO') {
+          throw new UnprocessableEntityException('El ticket ya se encuentra pagado.');
+        }
+        throw new UnprocessableEntityException(
+          'El ticket debe tener una salida registrada antes de procesar el pago.',
+        );
+      }
+
+      return transaction.pago.create({ data: datos });
+    });
   }
 
   async obtenerTicketPorId(ticketId: number): Promise<Ticket | null> {

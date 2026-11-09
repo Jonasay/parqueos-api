@@ -10,19 +10,21 @@ export class PagosService {
   ) {}
 
   async procesarPago(datos: any) {
-    // 1. Validar existencia del ticket (Manejo de códigos HTTP: 404)[cite: 7, 8]
     const ticket = await this.pagosRepository.obtenerTicketPorId(datos.ticket_id);
     if (!ticket) {
       throw new NotFoundException(`El ticket con ID ${datos.ticket_id} no existe.`);
     }
 
-    // 2. Validar que no se pague dos veces (Manejo de códigos HTTP: 422)[cite: 7, 8]
     if (ticket.estado === 'PAGADO') {
       throw new UnprocessableEntityException('El ticket ya se encuentra pagado.');
     }
+    if (ticket.estado !== 'FINALIZADO') {
+      throw new UnprocessableEntityException(
+        'El ticket debe tener una salida registrada antes de procesar el pago.',
+      );
+    }
 
-    // 3. Registrar el pago usando ORM
-    const pagoRealizado = await this.pagosRepository.registrarPago({
+    return this.pagosRepository.registrarPagoYMarcarTicketComoPagado({
       ticket_id: datos.ticket_id,
       total_pagado: datos.total_pagado,
       metodo_pago_id: datos.metodo_pago_id,
@@ -30,11 +32,6 @@ export class PagosService {
       numero_autorizacion: datos.numero_autorizacion,
       requiere_fel: datos.requiere_fel ?? false,
     });
-
-    // 4. Actualizar estado del ticket
-    await this.pagosRepository.marcarTicketComoPagado(datos.ticket_id);
-
-    return pagoRealizado;
   }
 
   async buscarPorId(id: number) {

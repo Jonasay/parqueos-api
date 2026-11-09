@@ -65,17 +65,59 @@ Crea un archivo .env en la raíz del proyecto basándote en el archivo de ejempl
 # Conexión a la base de datos PostgreSQL local o en la nube
 DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/db_parqueos?schema=public"
 
-# Integración SOA API externa de Autenticación
+# Integración con la API externa de autenticación
 EXTERNAL_API_URL="https://apilogin-qh0o.onrender.com"
-EXTERNAL_API_KEY="clave-configurada-en-el-servicio-de-autenticación"
-JWT_SECRET="LoginParqueo_2026_JVC_KEY"
+EXTERNAL_API_KEY="<configurada en el servicio de autenticación>"
+JWT_SECRET="<secreto compartido con la firma JWT del servicio de autenticación>"
 
 
-(Asegúrate de cambiar las credenciales de DATABASE_URL por las de tu servidor PostgreSQL).
+Configura estas variables en el entorno del servidor; no las envíes desde el frontend ni las
+incluyas en el repositorio. `DATABASE_URL`, `EXTERNAL_API_URL`, `EXTERNAL_API_KEY` y `JWT_SECRET`
+son obligatorias. La aplicación no usa un secreto predeterminado y exige que `JWT_SECRET` tenga
+al menos 32 caracteres en producción. Debe coincidir con el secreto de firma del JWT externo:
+parqueos valida su firma HS256, expiración e identidad antes de sincronizar al usuario, y
+`JwtStrategy` verifica el mismo token con `JWT_SECRET`.
 
-El inicio de sesión consulta la API externa y sincroniza su cuenta en `usuarios` de Render usando el ID externo.
-El rol indicado por la API externa debe existir en la tabla `roles` con el mismo ID. El perfil operativo de
-`empleado` debe registrarse explícitamente desde Configuración para que esa cuenta pueda emitir tickets.
+El proceso del servidor es el único que llama a la API externa, usando `EXTERNAL_API_KEY` como
+cabecera `x-api-key`. El rol debe existir y estar activo en `roles`; no se aceptan privilegios desde
+el registro del cliente. El perfil operativo de empleado se administra localmente y debe estar
+activo para emitir tickets.
+
+### Contrato de autenticación
+
+- `POST /api/auth/login` recibe `{ "email": "...", "password": "..." }`. Tras validar con el
+  servicio externo, verifica el JWT devuelto (HS256, vigente y con `id` igual al ID externo),
+  sincroniza el usuario y devuelve
+  `{ "ok": true, "usuario": { "id": <ID local>, "external_id": "<ID externo>", "email": "...",
+  "rol_id": <ID rol local> }, "token": "<JWT externo>" }`. El `id` del JWT es el ID externo,
+  que es el identificador que busca `JwtStrategy`; `usuario.id` siempre es el ID local.
+- `POST /api/auth/registro` recibe `{ "email": "...", "password": "...", "nombres": "...",
+  "apellidos": "..." }` (los nombres son opcionales). El proxy sólo reenvía esos datos permitidos.
+  La API externa debe confirmar el registro y devolver `usuario` con `id`, `correo` y `rol`.
+  Parqueos valida esos campos y devuelve el mismo objeto `usuario` local que el login, sin token.
+- Errores: `400` entrada inválida, `401` credenciales incorrectas, `403` usuario local inactivo,
+  `409` correo/identidad en conflicto, `422` registro rechazado o regla de negocio incumplida y
+  `502` respuesta o comunicación inválida con el servicio externo. El rol o el ID externo faltante
+  en una respuesta externa se trata como respuesta inválida, no como una identidad nueva.
+
+### Contrato de tickets y pagos
+
+- `POST /api/tickets/entrada` acepta `{ "placa": "P-123ABC", "espacio_id": 5 }` (también admite
+  los IDs camelCase compatibles). El vehículo debe existir y estar activo; si no existe, se debe
+  registrar primero mediante `POST /api/vehiculos`. El usuario autenticado debe tener empleado
+  activo y el espacio debe existir, estar activo y tener estado `DISPONIBLE` o `LIBRE`. La
+  reserva del espacio y la creación del ticket son transaccionales.
+- `GET /api/tickets` devuelve una lista de objetos con `id`, `codigo`, `placa`, `espacio_id`,
+  `hora_entrada`, `hora_salida` y `estado`. La respuesta de entrada y salida usa la misma forma.
+- `PUT /api/tickets/salida/:codigo` cierra el ticket activo y libera el espacio en una transacción.
+  Un ticket cerrado no se puede cerrar de nuevo.
+- `POST /api/pagos` recibe `ticket_id`, `total_pagado` y `metodo_pago_id`, con los campos
+  opcionales definidos en Swagger. Sólo admite tickets con salida registrada. La creación del
+  pago y el cambio a `PAGADO` son transaccionales; un ticket pagado no se puede cobrar de nuevo.
+
+No se requiere migración ni cambio de esquema Prisma para estas correcciones. Para sincronizar el
+esquema existente, despliega la aplicación según el procedimiento de base de datos configurado en
+tu entorno.
 
 4. Sincronizar la Base de Datos
 

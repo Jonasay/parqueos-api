@@ -8,6 +8,7 @@ describe('PagosService', () => {
 
   const mockPagosRepository = {
     registrarPago: vi.fn(),
+    registrarPagoYMarcarTicketComoPagado: vi.fn(),
     obtenerTicketPorId: vi.fn(),
     marcarTicketComoPagado: vi.fn(),
   };
@@ -30,33 +31,42 @@ describe('PagosService', () => {
 
   it('2. Debe procesar un pago exitosamente si el ticket es válido', async () => {
     const dto = { ticket_id: 1, total_pagado: 25.5, metodo_pago_id: 1 };
-    mockPagosRepository.obtenerTicketPorId.mockResolvedValue({ id: 1, estado: 'ACTIVO' });
-    mockPagosRepository.registrarPago.mockResolvedValue({ id: 99, ...dto });
+    mockPagosRepository.obtenerTicketPorId.mockResolvedValue({ id: 1, estado: 'FINALIZADO' });
+    mockPagosRepository.registrarPagoYMarcarTicketComoPagado.mockResolvedValue({ id: 99, ...dto });
     
     const result = await service.procesarPago(dto);
     
     expect(result.id).toEqual(99);
-    expect(mockPagosRepository.registrarPago).toHaveBeenCalled();
-    expect(mockPagosRepository.marcarTicketComoPagado).toHaveBeenCalledWith(1);
+    expect(mockPagosRepository.registrarPagoYMarcarTicketComoPagado).toHaveBeenCalled();
   });
 
   it('3. Debe lanzar NotFoundException (404) si el ticket no existe', async () => {
     mockPagosRepository.obtenerTicketPorId.mockResolvedValue(null);
     await expect(service.procesarPago({ ticket_id: 999 })).rejects.toThrow(NotFoundException);
-    expect(mockPagosRepository.registrarPago).not.toHaveBeenCalled();
+    expect(mockPagosRepository.registrarPagoYMarcarTicketComoPagado).not.toHaveBeenCalled();
   });
 
   it('4. Debe lanzar UnprocessableEntityException (422) si el ticket ya fue pagado', async () => {
     mockPagosRepository.obtenerTicketPorId.mockResolvedValue({ id: 1, estado: 'PAGADO' });
     await expect(service.procesarPago({ ticket_id: 1 })).rejects.toThrow(UnprocessableEntityException);
-    expect(mockPagosRepository.registrarPago).not.toHaveBeenCalled();
+    expect(mockPagosRepository.registrarPagoYMarcarTicketComoPagado).not.toHaveBeenCalled();
   });
 
-  it('5. Debe aislar la base de datos no llamando a update si falla la creación del pago', async () => {
+  it('no procesa el pago antes de registrar la salida', async () => {
     mockPagosRepository.obtenerTicketPorId.mockResolvedValue({ id: 1, estado: 'ACTIVO' });
-    mockPagosRepository.registrarPago.mockRejectedValue(new Error('Fallo de BD'));
+
+    await expect(service.procesarPago({ ticket_id: 1 })).rejects.toThrow(
+      UnprocessableEntityException,
+    );
+    expect(mockPagosRepository.registrarPagoYMarcarTicketComoPagado).not.toHaveBeenCalled();
+  });
+
+  it('propaga errores de pago y mantiene el cambio transaccional', async () => {
+    mockPagosRepository.obtenerTicketPorId.mockResolvedValue({ id: 1, estado: 'FINALIZADO' });
+    mockPagosRepository.registrarPagoYMarcarTicketComoPagado.mockRejectedValue(
+      new Error('Fallo de BD'),
+    );
     
     await expect(service.procesarPago({ ticket_id: 1 })).rejects.toThrow();
-    expect(mockPagosRepository.marcarTicketComoPagado).not.toHaveBeenCalled();
   });
 });

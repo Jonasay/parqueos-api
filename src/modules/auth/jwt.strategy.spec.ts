@@ -12,6 +12,7 @@ describe('JwtStrategy', () => {
   };
 
   beforeEach(async () => {
+    vi.stubEnv('JWT_SECRET', 'test-jwt-secret');
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         JwtStrategy,

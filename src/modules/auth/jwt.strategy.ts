@@ -6,17 +6,22 @@ import { PrismaService } from '../../prisma/prisma.service.js';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly prisma: PrismaService) {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('Falta configurar JWT_SECRET.');
+    }
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-
-      secretOrKey: process.env.JWT_SECRET || 'LoginParqueo_2026_JVC_KEY', 
+      secretOrKey: secret,
+      algorithms: ['HS256'],
     });
   }
 
-  async validate(payload: { id?: number | string; usuario_id?: number | string; email?: string }) {
-    const externalId = payload.id ?? payload.usuario_id;
-    if (externalId === undefined || externalId === null) {
+  async validate(payload: { id?: number | string; email?: string }) {
+    const externalId = payload.id;
+    if (externalId === undefined || externalId === null || String(externalId).trim() === '') {
       throw new UnauthorizedException('El token no contiene un identificador de usuario válido.');
     }
 

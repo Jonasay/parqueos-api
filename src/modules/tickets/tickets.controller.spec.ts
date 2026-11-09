@@ -11,6 +11,7 @@ describe('TicketsController', () => {
   let controller: TicketsController;
   const mockTicketsService = {
     registrarEntrada: vi.fn(),
+    listar: vi.fn(),
     procesarSalida: vi.fn(),
   };
 
@@ -31,6 +32,13 @@ describe('TicketsController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('expone el listado para Caja', async () => {
+    mockTicketsService.listar.mockResolvedValue([]);
+
+    await expect(controller.listar()).resolves.toEqual([]);
+    expect(mockTicketsService.listar).toHaveBeenCalledOnce();
   });
 
   it('registra la entrada usando los nombres camelCase del DTO', async () => {

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
@@ -16,6 +16,13 @@ interface AuthenticatedRequest extends Request {
 @Controller('api/tickets')
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'Lista tickets para Caja' })
+  @ApiResponse({ status: 200, description: 'Tickets con codigo, placa, espacio y horarios.' })
+  async listar() {
+    return this.ticketsService.listar();
+  }
 
   @Post('entrada')
   @ApiOperation({ summary: 'Registra el ingreso de un vehículo' })
