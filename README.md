@@ -87,6 +87,16 @@ npm run start:dev
 
 La API estará corriendo en: http://localhost:3000
 
+## Despliegue en Render
+
+Configura el servicio como **Web Service** con:
+
+- **Build Command:** `npm install && npm run build`
+- **Start Command:** `npm run start:prod`
+- Variable de entorno `DATABASE_URL` apuntando a la base PostgreSQL de Render.
+
+En producción, `start:prod` ejecuta `prisma db push` antes de iniciar NestJS para sincronizar la base con `prisma/schema.prisma`. Esto agrega las columnas faltantes `activo`/`estado_activo` con su valor predeterminado, conservando los registros existentes. Si Render tiene configurado otro comando de inicio, cámbialo a `npm run start:prod`.
+
 - Instrucciones para Probar los Endpoints Individualmente
 
 La API está completamente documentada con Swagger. Para interactuar con ella y probar los endpoints:
@@ -127,4 +137,3 @@ npm run test
 Para ver la cobertura de las pruebas:
 
 npm run test:cov
-

@@ -1,8 +1,9 @@
 import { Body, Controller, Delete, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { TicketsService } from './tickets.service.js';
 import { ActualizarTicketDto } from './dto/create-ticket.dto.js';
+import { RegistrarEntradaTicketDto } from './dto/registrar-entrada-ticket.dto.js';
 
 @ApiTags('Tickets')
 @ApiBearerAuth()
@@ -13,15 +14,16 @@ export class TicketsController {
 
   @Post('entrada')
   @ApiOperation({ summary: 'Registra el ingreso de un vehículo' })
+  @ApiBody({ type: RegistrarEntradaTicketDto })
   @ApiResponse({ status: 201, description: 'Ticket generado exitosamente.' })
   @ApiResponse({ status: 422, description: 'Espacio no disponible.' })
   async registrarEntrada(
-    @Body() body: { vehiculoId: number; espacioId: number; empleadoId: number },
+    @Body() body: RegistrarEntradaTicketDto,
   ) {
     return this.ticketsService.registrarEntrada(
-      body.vehiculoId,
-      body.espacioId,
-      body.empleadoId,
+      body.vehiculoId ?? body.vehiculo_id,
+      body.espacioId ?? body.espacio_id,
+      body.empleadoId ?? body.empleado_ingreso_id,
     );
   }
 
