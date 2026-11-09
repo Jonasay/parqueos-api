@@ -67,10 +67,15 @@ DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/db_parqueos?schema
 
 # Integración SOA API externa de Autenticación
 EXTERNAL_API_URL="https://apilogin-qh0o.onrender.com"
+EXTERNAL_API_KEY="clave-configurada-en-el-servicio-de-autenticación"
 JWT_SECRET="LoginParqueo_2026_JVC_KEY"
 
 
 (Asegúrate de cambiar las credenciales de DATABASE_URL por las de tu servidor PostgreSQL).
+
+El inicio de sesión consulta la API externa y sincroniza su cuenta en `usuarios` de Render usando el ID externo.
+El rol indicado por la API externa debe existir en la tabla `roles` con el mismo ID. El perfil operativo de
+`empleado` debe registrarse explícitamente desde Configuración para que esa cuenta pueda emitir tickets.
 
 4. Sincronizar la Base de Datos
 

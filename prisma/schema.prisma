@@ -17,29 +17,33 @@ model Rol {
 }
 
 model Usuario {
-  id            Int         @id @default(autoincrement())
-  email         String      @unique @db.VarChar(150)
-  password_hash String
-  estado        String      @db.VarChar(20)
-  activo        Boolean     @default(true)
-  rol_id        Int
-  rol           Rol         @relation(fields: [rol_id], references: [id])
-  empleado      Empleado?
-  cliente       Cliente?
-  audit_logs    AuditLog[]
+  id               Int        @id @default(autoincrement())
+  email            String     @unique @db.VarChar(150)
+  password_hash    String?
+  external_auth_id String?    @unique @db.VarChar(100)
+  estado           String     @db.VarChar(20)
+  activo           Boolean    @default(true)
+  rol_id           Int
+  rol              Rol        @relation(fields: [rol_id], references: [id])
+  empleado         Empleado?
+  cliente          Cliente?
+  audit_logs       AuditLog[]
 
   @@map("usuarios")
 }
 
 model Empleado {
-  id              Int       @id @default(autoincrement())
-  usuario_id      Int       @unique
-  dpi             String?   @db.VarChar(20)
-  numero_igss     String?   @db.VarChar(30)
-  codigo_empleado String?   @db.VarChar(30)
-  turno_asignado  String?   @db.VarChar(50)
-  activo          Boolean   @default(true)
-  usuario         Usuario   @relation(fields: [usuario_id], references: [id])
+  id              Int      @id @default(autoincrement())
+  usuario_id      Int      @unique
+  nombres         String?  @db.VarChar(100)
+  apellidos       String?  @db.VarChar(100)
+  dpi             String?  @db.VarChar(20)
+  telefono        String?  @db.VarChar(30)
+  numero_igss     String?  @db.VarChar(30)
+  codigo_empleado String?  @db.VarChar(30)
+  turno_asignado  String?  @db.VarChar(50)
+  activo          Boolean  @default(true)
+  usuario         Usuario  @relation(fields: [usuario_id], references: [id])
   tickets         Ticket[]
 
   @@map("empleados")
@@ -59,41 +63,41 @@ model Cliente {
 }
 
 model Sucursal {
-  id                Int             @id @default(autoincrement())
-  nombre            String          @db.VarChar(150)
+  id                Int            @id @default(autoincrement())
+  nombre            String         @db.VarChar(150)
   direccion         String
-  telefono_contacto String?         @db.VarChar(30)
+  telefono_contacto String?        @db.VarChar(30)
   capacidad_maxima  Int
-  activo            Boolean         @default(true)
+  activo            Boolean        @default(true)
   niveles_parqueo   NivelParqueo[]
 
   @@map("sucursales")
 }
 
 model NivelParqueo {
-  id               Int               @id @default(autoincrement())
+  id               Int              @id @default(autoincrement())
   sucursal_id      Int
-  nombre_nivel     String            @db.VarChar(100)
-  activo           Boolean           @default(true)
-  sucursal         Sucursal          @relation(fields: [sucursal_id], references: [id])
+  nombre_nivel     String           @db.VarChar(100)
+  activo           Boolean          @default(true)
+  sucursal         Sucursal         @relation(fields: [sucursal_id], references: [id])
   espacios_parqueo EspacioParqueo[]
 
   @@map("niveles_parqueo")
 }
 
 model EstadoEspacio {
-  id               Int               @id @default(autoincrement())
-  nombre           String            @unique @db.VarChar(50)
-  activo           Boolean           @default(true)
+  id               Int              @id @default(autoincrement())
+  nombre           String           @unique @db.VarChar(50)
+  activo           Boolean          @default(true)
   espacios_parqueo EspacioParqueo[]
 
   @@map("estados_espacio")
 }
 
 model TipoVehiculo {
-  id               Int               @id @default(autoincrement())
-  nombre           String            @unique @db.VarChar(100)
-  activo           Boolean           @default(true)
+  id               Int              @id @default(autoincrement())
+  nombre           String           @unique @db.VarChar(100)
+  activo           Boolean          @default(true)
   espacios_parqueo EspacioParqueo[]
   tarifas          Tarifa[]
 
@@ -116,13 +120,13 @@ model EspacioParqueo {
 }
 
 model Vehiculo {
-  id         Int        @id @default(autoincrement())
-  placa      String     @unique @db.VarChar(20)
-  color      String?    @db.VarChar(50)
-  marca      String?    @db.VarChar(100)
+  id         Int       @id @default(autoincrement())
+  placa      String    @unique @db.VarChar(20)
+  color      String?   @db.VarChar(50)
+  marca      String?   @db.VarChar(100)
   cliente_id Int?
-  activo     Boolean    @default(true)
-  cliente    Cliente?   @relation(fields: [cliente_id], references: [id])
+  activo     Boolean   @default(true)
+  cliente    Cliente?  @relation(fields: [cliente_id], references: [id])
   tickets    Ticket[]
   pensiones  Pension[]
 
@@ -148,13 +152,13 @@ model Ticket {
 }
 
 model Pension {
-  id          Int      @id @default(autoincrement())
-  vehiculo_id Int
-  fecha_inicio DateTime @db.Date
-  fecha_fin   DateTime? @db.Date
-  estado_pago String   @db.VarChar(50)
-  activo      Boolean  @default(true)
-  vehiculo    Vehiculo @relation(fields: [vehiculo_id], references: [id])
+  id           Int       @id @default(autoincrement())
+  vehiculo_id  Int
+  fecha_inicio DateTime  @db.Date
+  fecha_fin    DateTime? @db.Date
+  estado_pago  String    @db.VarChar(50)
+  activo       Boolean   @default(true)
+  vehiculo     Vehiculo  @relation(fields: [vehiculo_id], references: [id])
 
   @@map("pensiones")
 }

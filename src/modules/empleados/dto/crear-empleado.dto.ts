@@ -12,7 +12,7 @@ export class CrearEmpleadoDto {
   @IsNotEmpty()
   nombres: string;
 
-  @ApiProperty({ description: 'Apellidos completos del empleado', example: 'García' })
+  @ApiProperty({ description: 'Apellidos del empleado', example: 'García' })
   @IsString()
   @IsNotEmpty()
   apellidos: string;

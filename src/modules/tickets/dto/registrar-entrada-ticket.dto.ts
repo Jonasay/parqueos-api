@@ -38,17 +38,4 @@ export class RegistrarEntradaTicketDto {
   @Min(1)
   espacio_id?: number;
 
-  @ApiPropertyOptional({ description: 'ID del empleado (usar empleadoId o empleado_ingreso_id)', example: 2 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  empleadoId?: number;
-
-  @ApiPropertyOptional({ description: 'ID del empleado (usar empleadoId o empleado_ingreso_id)', example: 2 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  empleado_ingreso_id?: number;
 }

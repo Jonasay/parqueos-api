@@ -6,7 +6,6 @@ export interface RegistrarEntradaData {
   vehiculoId?: number;
   placa?: string;
   espacioId: number;
-  empleadoId?: number;
   usuarioId: number;
 }
 

@@ -39,7 +39,6 @@ describe('TicketsService', () => {
     const datosEntrada = {
       vehiculoId: 1,
       espacioId: 5,
-      empleadoId: 2,
       usuarioId: 10,
     };
     mockTicketsRepository.registrarEntrada.mockResolvedValue(mockTicket);

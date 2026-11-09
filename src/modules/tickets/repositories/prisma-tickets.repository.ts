@@ -20,18 +20,7 @@ export class PrismaTicketsRepository implements ITicketsRepository {
       where: { usuario_id: datos.usuarioId },
     });
 
-    let empleadoId = empleadoAutenticado?.id;
-    if (!empleadoId && datos.empleadoId) {
-      const empleadoIndicado = await this.prisma.empleado.findUnique({
-        where: { id: datos.empleadoId },
-      });
-      if (!empleadoIndicado) {
-        throw new NotFoundException('No se encontró el empleado indicado.');
-      }
-      empleadoId = empleadoIndicado.id;
-    }
-
-    if (!empleadoId) {
+    if (!empleadoAutenticado) {
       throw new ForbiddenException('El usuario autenticado no está asociado a un empleado.');
     }
 
@@ -39,7 +28,7 @@ export class PrismaTicketsRepository implements ITicketsRepository {
       data: {
         vehiculo_id: vehiculo.id,
         espacio_id: datos.espacioId,
-        empleado_ingreso_id: empleadoId,
+        empleado_ingreso_id: empleadoAutenticado.id,
         hora_entrada: new Date(),
         estado: 'ACTIVO',
       },

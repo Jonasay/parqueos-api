@@ -37,7 +37,6 @@ describe('TicketsController', () => {
     const body = plainToInstance(RegistrarEntradaTicketDto, {
       vehiculoId: 1,
       espacioId: 5,
-      empleadoId: 2,
     });
 
     expect(await validate(body, { whitelist: true, forbidNonWhitelisted: true })).toHaveLength(0);
@@ -47,7 +46,6 @@ describe('TicketsController', () => {
       vehiculoId: 1,
       placa: undefined,
       espacioId: 5,
-      empleadoId: 2,
       usuarioId: 10,
     });
   });
@@ -65,9 +63,19 @@ describe('TicketsController', () => {
       vehiculoId: undefined,
       placa: 'P-123ABC',
       espacioId: 5,
-      empleadoId: undefined,
       usuarioId: 10,
     });
+  });
+
+  it('rechaza un empleado enviado desde el cliente', async () => {
+    const body = plainToInstance(RegistrarEntradaTicketDto, {
+      placa: 'P-123ABC',
+      espacioId: 5,
+      empleadoId: 2,
+    });
+
+    const errors = await validate(body, { whitelist: true, forbidNonWhitelisted: true });
+    expect(errors[0]?.constraints).toHaveProperty('whitelistValidation');
   });
 
   it('rechaza la entrada si no se envía ID ni placa de vehículo', async () => {

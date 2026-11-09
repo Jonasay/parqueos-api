@@ -40,7 +40,6 @@ export class TicketsController {
       vehiculoId,
       placa: body.placa,
       espacioId,
-      empleadoId: body.empleadoId ?? body.empleado_ingreso_id,
       usuarioId: request.user.usuarioId,
     });
   }

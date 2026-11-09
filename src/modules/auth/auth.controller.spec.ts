@@ -1,12 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller.js';
+import { AuthService } from './auth.service.js';
 
 describe('AuthController', () => {
   let controller: AuthController;
+  const authService = {
+    loginProxy: vi.fn(),
+    registroProxy: vi.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
+      providers: [{ provide: AuthService, useValue: authService }],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
