@@ -1,9 +1,14 @@
-import { Body, Controller, Delete, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { TicketsService } from './tickets.service.js';
 import { ActualizarTicketDto } from './dto/create-ticket.dto.js';
 import { RegistrarEntradaTicketDto } from './dto/registrar-entrada-ticket.dto.js';
+
+interface AuthenticatedRequest extends Request {
+  user: { usuarioId: number };
+}
 
 @ApiTags('Tickets')
 @ApiBearerAuth()
@@ -19,12 +24,25 @@ export class TicketsController {
   @ApiResponse({ status: 422, description: 'Espacio no disponible.' })
   async registrarEntrada(
     @Body() body: RegistrarEntradaTicketDto,
+    @Req() request: AuthenticatedRequest,
   ) {
-    return this.ticketsService.registrarEntrada(
-      body.vehiculoId ?? body.vehiculo_id,
-      body.espacioId ?? body.espacio_id,
-      body.empleadoId ?? body.empleado_ingreso_id,
-    );
+    const vehiculoId = body.vehiculoId ?? body.vehiculo_id;
+    const espacioId = body.espacioId ?? body.espacio_id;
+
+    if (vehiculoId === undefined && !body.placa) {
+      throw new BadRequestException('Debe enviar vehiculoId, vehiculo_id o placa.');
+    }
+    if (espacioId === undefined) {
+      throw new BadRequestException('Debe enviar espacioId o espacio_id.');
+    }
+
+    return this.ticketsService.registrarEntrada({
+      vehiculoId,
+      placa: body.placa,
+      espacioId,
+      empleadoId: body.empleadoId ?? body.empleado_ingreso_id,
+      usuarioId: request.user.usuarioId,
+    });
   }
 
   @Put('salida/:codigo')

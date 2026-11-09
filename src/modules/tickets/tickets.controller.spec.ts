@@ -4,6 +4,7 @@ import { TicketsService } from './tickets.service.js';
 import { RegistrarEntradaTicketDto } from './dto/registrar-entrada-ticket.dto.js';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
+import { BadRequestException } from '@nestjs/common';
 import { vi } from 'vitest';
 
 describe('TicketsController', () => {
@@ -40,30 +41,43 @@ describe('TicketsController', () => {
     });
 
     expect(await validate(body, { whitelist: true, forbidNonWhitelisted: true })).toHaveLength(0);
-    await controller.registrarEntrada(body);
+    await controller.registrarEntrada(body, { user: { usuarioId: 10 } } as never);
 
-    expect(mockTicketsService.registrarEntrada).toHaveBeenCalledWith(1, 5, 2);
+    expect(mockTicketsService.registrarEntrada).toHaveBeenCalledWith({
+      vehiculoId: 1,
+      placa: undefined,
+      espacioId: 5,
+      empleadoId: 2,
+      usuarioId: 10,
+    });
   });
 
-  it('registra la entrada usando los nombres snake_case', async () => {
+  it('registra la entrada por placa sin exigir IDs de vehículo o empleado', async () => {
     const body = plainToInstance(RegistrarEntradaTicketDto, {
-      vehiculo_id: 1,
-      espacio_id: 5,
-      empleado_ingreso_id: 2,
+      placa: 'P-123ABC',
+      espacioId: '5',
     });
 
     expect(await validate(body, { whitelist: true, forbidNonWhitelisted: true })).toHaveLength(0);
-    await controller.registrarEntrada(body);
+    await controller.registrarEntrada(body, { user: { usuarioId: 10 } } as never);
 
-    expect(mockTicketsService.registrarEntrada).toHaveBeenCalledWith(1, 5, 2);
+    expect(mockTicketsService.registrarEntrada).toHaveBeenCalledWith({
+      vehiculoId: undefined,
+      placa: 'P-123ABC',
+      espacioId: 5,
+      empleadoId: undefined,
+      usuarioId: 10,
+    });
   });
 
-  it('rechaza la entrada si falta un ID requerido', async () => {
+  it('rechaza la entrada si no se envía ID ni placa de vehículo', async () => {
     const body = plainToInstance(RegistrarEntradaTicketDto, {
-      vehiculo_id: 1,
-      espacio_id: 5,
+      espacioId: 5,
     });
 
-    expect((await validate(body, { whitelist: true, forbidNonWhitelisted: true })).length).toBeGreaterThan(0);
+    expect(await validate(body, { whitelist: true, forbidNonWhitelisted: true })).toHaveLength(0);
+    await expect(
+      controller.registrarEntrada(body, { user: { usuarioId: 10 } } as never),
+    ).rejects.toThrow(BadRequestException);
   });
 });

@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import type { ITicketsRepository } from './tickets.repository.interface.js';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import type { ITicketsRepository, RegistrarEntradaData } from './tickets.repository.interface.js';
 import { PrismaService } from '../../../prisma/prisma.service.js';
 import { Ticket } from '@prisma/client';
 
@@ -7,11 +7,38 @@ import { Ticket } from '@prisma/client';
 export class PrismaTicketsRepository implements ITicketsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async registrarEntrada(vehiculoId: number, espacioId: number, empleadoId: number): Promise<Ticket> {
+  async registrarEntrada(datos: RegistrarEntradaData): Promise<Ticket> {
+    const vehiculo = datos.vehiculoId
+      ? await this.prisma.vehiculo.findUnique({ where: { id: datos.vehiculoId } })
+      : await this.prisma.vehiculo.findUnique({ where: { placa: datos.placa } });
+
+    if (!vehiculo) {
+      throw new NotFoundException('No se encontró el vehículo indicado.');
+    }
+
+    const empleadoAutenticado = await this.prisma.empleado.findUnique({
+      where: { usuario_id: datos.usuarioId },
+    });
+
+    let empleadoId = empleadoAutenticado?.id;
+    if (!empleadoId && datos.empleadoId) {
+      const empleadoIndicado = await this.prisma.empleado.findUnique({
+        where: { id: datos.empleadoId },
+      });
+      if (!empleadoIndicado) {
+        throw new NotFoundException('No se encontró el empleado indicado.');
+      }
+      empleadoId = empleadoIndicado.id;
+    }
+
+    if (!empleadoId) {
+      throw new ForbiddenException('El usuario autenticado no está asociado a un empleado.');
+    }
+
     return this.prisma.ticket.create({
       data: {
-        vehiculo_id: vehiculoId,
-        espacio_id: espacioId,
+        vehiculo_id: vehiculo.id,
+        espacio_id: datos.espacioId,
         empleado_ingreso_id: empleadoId,
         hora_entrada: new Date(),
         estado: 'ACTIVO',

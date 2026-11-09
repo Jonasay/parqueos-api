@@ -1,6 +1,6 @@
 import { Injectable, Inject, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { TICKETS_REPOSITORY } from './repositories/tickets.repository.interface.js';
-import type { ITicketsRepository } from './repositories/tickets.repository.interface.js';
+import type { ITicketsRepository, RegistrarEntradaData } from './repositories/tickets.repository.interface.js';
 
 @Injectable()
 export class TicketsService {
@@ -9,9 +9,9 @@ export class TicketsService {
     private readonly ticketsRepository: ITicketsRepository,
   ) {}
 
-  async registrarEntrada(vehiculoId: number, espacioId: number, empleadoId: number) {
+  async registrarEntrada(datos: RegistrarEntradaData) {
     // Aquí podrías agregar la lógica para verificar si el espacio está disponible
-    return this.ticketsRepository.registrarEntrada(vehiculoId, espacioId, empleadoId);
+    return this.ticketsRepository.registrarEntrada(datos);
   }
 
   async procesarSalida(codigoTicket: string) {

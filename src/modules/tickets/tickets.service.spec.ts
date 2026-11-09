@@ -36,11 +36,17 @@ describe('TicketsService', () => {
   // Prueba 1: Registro exitoso
   it('1. Debe registrar la entrada de un vehículo correctamente', async () => {
     const mockTicket = { id: 1, codigo_ticket: 'uuid-123', estado: 'ACTIVO' };
+    const datosEntrada = {
+      vehiculoId: 1,
+      espacioId: 5,
+      empleadoId: 2,
+      usuarioId: 10,
+    };
     mockTicketsRepository.registrarEntrada.mockResolvedValue(mockTicket);
 
-    const result = await service.registrarEntrada(1, 1, 1);
+    const result = await service.registrarEntrada(datosEntrada);
     expect(result).toEqual(mockTicket);
-    expect(mockTicketsRepository.registrarEntrada).toHaveBeenCalledWith(1, 1, 1);
+    expect(mockTicketsRepository.registrarEntrada).toHaveBeenCalledWith(datosEntrada);
   });
 
   // Prueba 2: Salida exitosa
