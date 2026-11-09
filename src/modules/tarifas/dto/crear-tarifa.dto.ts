@@ -1,5 +1,5 @@
 import { IsNumber, IsInt, IsNotEmpty, Min, IsBoolean, IsOptional } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
 export class CrearTarifaDto {
   @ApiProperty({ description: 'ID del tipo de vehículo (ej. 1: Moto, 2: Sedán)', example: 1 })
@@ -23,3 +23,5 @@ export class CrearTarifaDto {
   @IsOptional()
   estado_activo?: boolean;
 }
+
+export class ActualizarTarifaDto extends PartialType(CrearTarifaDto) {}

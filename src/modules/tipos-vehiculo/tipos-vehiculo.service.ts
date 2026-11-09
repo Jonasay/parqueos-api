@@ -29,6 +29,11 @@ export class TiposVehiculoService {
     return tipo;
   }
 
+  async actualizarTipo(id: number, datos: any) {
+    await this.buscarPorId(id);
+    return this.tiposVehiculoRepository.actualizar(id, datos);
+  }
+
   async eliminarTipo(id: number) {
     await this.buscarPorId(id);
     return this.tiposVehiculoRepository.eliminar(id);

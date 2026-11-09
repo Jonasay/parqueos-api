@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsInt, Min, MaxLength } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 export class CrearNivelParqueoDto {
   @ApiProperty({ description: 'ID de la sucursal a la que pertenece el nivel', example: 1 })
@@ -14,3 +14,5 @@ export class CrearNivelParqueoDto {
   @MaxLength(50)
   nombre_nivel: string;
 }
+
+export class ActualizarNivelParqueoDto extends PartialType(CrearNivelParqueoDto) {}

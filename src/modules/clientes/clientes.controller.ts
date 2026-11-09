@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { ClientesService } from './clientes.service.js';
-import { CrearClienteDto } from './dto/crear-cliente.dto.js';
+import { CrearClienteDto, ActualizarClienteDto } from './dto/crear-cliente.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
@@ -31,6 +31,17 @@ export class ClientesController {
   @ApiResponse({ status: 404, description: 'Cliente no encontrado.' })
   async buscarPorUsuarioId(@Param('usuarioId', ParseIntPipe) usuarioId: number) {
     return this.clientesService.buscarPorUsuarioId(usuarioId);
+  }
+
+  @Put(':usuarioId')
+  @ApiOperation({ summary: 'Actualiza un cliente por su ID de usuario' })
+  @ApiResponse({ status: 200, description: 'Cliente actualizado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Cliente no encontrado.' })
+  async actualizar(
+    @Param('usuarioId', ParseIntPipe) usuarioId: number,
+    @Body() actualizarClienteDto: ActualizarClienteDto,
+  ) {
+    return this.clientesService.actualizarCliente(usuarioId, actualizarClienteDto);
   }
 
   @Delete(':usuarioId')

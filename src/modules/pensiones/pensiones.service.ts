@@ -17,7 +17,7 @@ export class PensionesService {
       throw new UnprocessableEntityException(`El vehículo ID ${datos.vehiculo_id} ya posee una pensión activa.`);
     }
 
-    return this.pensionesRepository.crear({ ...datos, estado: 'ACTIVA' });
+    return this.pensionesRepository.crear({ ...datos, estado_pago: 'ACTIVA' });
   }
 
   async obtenerTodas() {
@@ -32,6 +32,24 @@ export class PensionesService {
       throw new NotFoundException(`No se encontró una pensión activa y válida para el vehículo ID ${vehiculoId}.`);
     }
     return pension;
+  }
+
+  async buscarPorId(id: number) {
+    const pension = await this.pensionesRepository.buscarPorId(id);
+    if (!pension) {
+      throw new NotFoundException(`Pensión con ID ${id} no encontrada.`);
+    }
+    return pension;
+  }
+
+  async actualizarPension(id: number, datos: any) {
+    await this.buscarPorId(id);
+    return this.pensionesRepository.actualizar(id, datos);
+  }
+
+  async actualizarPensionPorVehiculo(vehiculoId: number, datos: any) {
+    const pension = await this.verificarAcceso(vehiculoId);
+    return this.pensionesRepository.actualizar(pension.id, datos);
   }
 
   async eliminarPension(vehiculoId: number) {

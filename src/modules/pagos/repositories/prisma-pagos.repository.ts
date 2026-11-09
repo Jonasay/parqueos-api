@@ -22,6 +22,24 @@ export class PrismaPagosRepository implements IPagosRepository {
     });
   }
 
+  async buscarPorId(id: number): Promise<Pago | null> {
+    return this.prisma.pago.findUnique({ where: { id } });
+  }
+
+  async actualizar(id: number, datos: any): Promise<Pago> {
+    return this.prisma.pago.update({
+      where: { id },
+      data: datos,
+    });
+  }
+
+  async actualizarPorTicketId(ticketId: number, datos: any): Promise<any> {
+    return this.prisma.pago.updateMany({
+      where: { ticket_id: ticketId },
+      data: datos,
+    });
+  }
+
   async eliminarPorTicketId(ticketId: number): Promise<any> {
     return this.prisma.pago.updateMany({
       where: { ticket_id: ticketId },

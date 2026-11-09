@@ -25,6 +25,11 @@ export class EspaciosService {
     return espacio;
   }
 
+  async actualizarEspacio(id: number, datos: any) {
+    await this.buscarPorId(id);
+    return this.espaciosRepository.actualizar(id, datos);
+  }
+
   async eliminarEspacio(id: number) {
     await this.buscarPorId(id);
     return this.espaciosRepository.eliminar(id);

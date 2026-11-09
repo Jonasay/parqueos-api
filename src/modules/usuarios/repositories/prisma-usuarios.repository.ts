@@ -15,9 +15,23 @@ export class PrismaUsuariosRepository implements IUsuariosRepository {
     return this.prisma.usuario.findUnique({ where: { email } });
   }
 
+  async buscarPorId(id: number): Promise<Usuario | null> {
+    return this.prisma.usuario.findUnique({ where: { id } });
+  }
+
   async obtenerTodos(): Promise<Usuario[]> {
     return this.prisma.usuario.findMany({
       include: { rol: true, empleado: true }
+    });
+  }
+
+  async actualizar(idOrEmail: string | number, datos: any): Promise<Usuario> {
+    const where = typeof idOrEmail === 'number' || (!isNaN(Number(idOrEmail)) && !String(idOrEmail).includes('@'))
+      ? { id: Number(idOrEmail) }
+      : { email: String(idOrEmail) };
+    return this.prisma.usuario.update({
+      where,
+      data: datos,
     });
   }
 

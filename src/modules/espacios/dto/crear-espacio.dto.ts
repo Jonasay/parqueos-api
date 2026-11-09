@@ -1,5 +1,5 @@
 import { IsInt, IsBoolean, IsNotEmpty, Min } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 export class CrearEspacioDto {
   @ApiProperty({ description: 'ID del nivel donde se ubica el espacio', example: 1 })
@@ -25,3 +25,5 @@ export class CrearEspacioDto {
   @IsNotEmpty()
   es_techado: boolean;
 }
+
+export class ActualizarEspacioDto extends PartialType(CrearEspacioDto) {}

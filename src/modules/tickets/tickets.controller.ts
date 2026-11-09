@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Param, Post, Put, UseGuards } from '@nestjs/c
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { TicketsService } from './tickets.service.js';
+import { ActualizarTicketDto } from './dto/create-ticket.dto.js';
 
 @ApiTags('Tickets')
 @ApiBearerAuth()
@@ -30,6 +31,17 @@ export class TicketsController {
   @ApiResponse({ status: 404, description: 'Ticket no encontrado.' })
   async registrarSalida(@Param('codigo') codigo: string) {
     return this.ticketsService.procesarSalida(codigo);
+  }
+
+  @Put(':codigo')
+  @ApiOperation({ summary: 'Actualiza un ticket por su código' })
+  @ApiResponse({ status: 200, description: 'Ticket actualizado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Ticket no encontrado.' })
+  async actualizar(
+    @Param('codigo') codigo: string,
+    @Body() actualizarTicketDto: ActualizarTicketDto,
+  ) {
+    return this.ticketsService.actualizarTicket(codigo, actualizarTicketDto);
   }
 
   @Delete(':codigo')

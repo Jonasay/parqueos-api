@@ -1,5 +1,5 @@
 import { IsInt, IsNotEmpty, Min } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 export class CreateTicketDto {
   @ApiProperty({ description: 'ID del vehículo que ingresa', example: 1 })
@@ -20,3 +20,5 @@ export class CreateTicketDto {
   @IsNotEmpty()
   empleadoId: number;
 }
+
+export class ActualizarTicketDto extends PartialType(CreateTicketDto) {}

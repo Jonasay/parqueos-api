@@ -6,5 +6,6 @@ export interface IVehiculosRepository {
   crear(datos: any): Promise<Vehiculo>;
   buscarPorPlaca(placa: string): Promise<Vehiculo | null>;
   obtenerTodos(): Promise<Vehiculo[]>;
+  actualizar(placa: string, datos: any): Promise<Vehiculo>;
   eliminar(placa: string): Promise<Vehiculo>;
 }

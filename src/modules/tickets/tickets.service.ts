@@ -31,6 +31,14 @@ export class TicketsService {
     return this.ticketsRepository.actualizarSalida(ticket.id, horaSalida);
   }
 
+  async actualizarTicket(codigoTicket: string, datos: any) {
+    const ticket = await this.ticketsRepository.buscarPorCodigo(codigoTicket);
+    if (!ticket) {
+      throw new NotFoundException(`El ticket ${codigoTicket} no existe.`);
+    }
+    return this.ticketsRepository.actualizar(codigoTicket, datos);
+  }
+
   async eliminarTicket(codigoTicket: string) {
     const ticket = await this.ticketsRepository.buscarPorCodigo(codigoTicket);
     if (!ticket) {

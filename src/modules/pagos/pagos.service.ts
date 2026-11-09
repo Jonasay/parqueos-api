@@ -37,6 +37,27 @@ export class PagosService {
     return pagoRealizado;
   }
 
+  async buscarPorId(id: number) {
+    const pago = await this.pagosRepository.buscarPorId(id);
+    if (!pago) {
+      throw new NotFoundException(`El pago con ID ${id} no existe.`);
+    }
+    return pago;
+  }
+
+  async actualizarPago(id: number, datos: any) {
+    await this.buscarPorId(id);
+    return this.pagosRepository.actualizar(id, datos);
+  }
+
+  async actualizarPagoPorTicket(ticketId: number, datos: any) {
+    const ticket = await this.pagosRepository.obtenerTicketPorId(ticketId);
+    if (!ticket) {
+      throw new NotFoundException(`El ticket con ID ${ticketId} no existe.`);
+    }
+    return this.pagosRepository.actualizarPorTicketId(ticketId, datos);
+  }
+
   async eliminarPago(ticketId: number) {
     const ticket = await this.pagosRepository.obtenerTicketPorId(ticketId);
     if (!ticket) {

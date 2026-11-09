@@ -7,5 +7,6 @@ export interface ISucursalesRepository {
   buscarPorNombre(nombre: string): Promise<Sucursal | null>;
   obtenerTodas(): Promise<Sucursal[]>;
   buscarPorId(id: number): Promise<Sucursal | null>;
+  actualizar(id: number, datos: any): Promise<Sucursal>;
   eliminar(id: number): Promise<Sucursal>;
 }

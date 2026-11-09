@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsInt, Min, MaxLength, IsOptional } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
 export class CrearSucursalDto {
   @ApiProperty({ description: 'Nombre comercial de la sucursal', example: 'Sucursal Centro Xela' })
@@ -24,3 +24,5 @@ export class CrearSucursalDto {
   @IsNotEmpty()
   capacidad_maxima: number;
 }
+
+export class ActualizarSucursalDto extends PartialType(CrearSucursalDto) {}

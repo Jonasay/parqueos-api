@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { TiposVehiculoService } from './tipos-vehiculo.service.js';
-import { CrearTipoVehiculoDto } from './dto/crear-tipo-vehiculo.dto.js';
+import { CrearTipoVehiculoDto, ActualizarTipoVehiculoDto } from './dto/crear-tipo-vehiculo.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
@@ -31,6 +31,17 @@ export class TiposVehiculoController {
   @ApiResponse({ status: 404, description: 'Tipo de vehículo no encontrado.' })
   async buscarPorId(@Param('id', ParseIntPipe) id: number) {
     return this.tiposVehiculoService.buscarPorId(id);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualiza un tipo de vehículo por su ID' })
+  @ApiResponse({ status: 200, description: 'Tipo de vehículo actualizado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Tipo de vehículo no encontrado.' })
+  async actualizar(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() actualizarTipoVehiculoDto: ActualizarTipoVehiculoDto,
+  ) {
+    return this.tiposVehiculoService.actualizarTipo(id, actualizarTipoVehiculoDto);
   }
 
   @Delete(':id')

@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { PensionesService } from './pensiones.service.js';
-import { CrearPensionDto } from './dto/crear-pension.dto.js';
+import { CrearPensionDto, ActualizarPensionDto } from './dto/crear-pension.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
@@ -31,6 +31,28 @@ export class PensionesController {
   @ApiResponse({ status: 404, description: 'Sin pensión activa.' })
   async verificarAcceso(@Param('id', ParseIntPipe) id: number) {
     return this.pensionesService.verificarAcceso(id);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualiza una pensión por su ID' })
+  @ApiResponse({ status: 200, description: 'Pensión actualizada exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Pensión no encontrada.' })
+  async actualizar(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() actualizarPensionDto: ActualizarPensionDto,
+  ) {
+    return this.pensionesService.actualizarPension(id, actualizarPensionDto);
+  }
+
+  @Put('vehiculo/:id')
+  @ApiOperation({ summary: 'Actualiza la pensión activa de un vehículo' })
+  @ApiResponse({ status: 200, description: 'Pensión actualizada exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Pensión activa no encontrada.' })
+  async actualizarPorVehiculo(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() actualizarPensionDto: ActualizarPensionDto,
+  ) {
+    return this.pensionesService.actualizarPensionPorVehiculo(id, actualizarPensionDto);
   }
 
   @Delete('vehiculo/:id')

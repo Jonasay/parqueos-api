@@ -17,8 +17,22 @@ export class PrismaTarifasRepository implements ITarifasRepository {
     });
   }
 
+  async buscarPorId(id: number): Promise<Tarifa | null> {
+    return this.prisma.tarifa.findUnique({
+      where: { id },
+      include: { tipo_vehiculo: true },
+    });
+  }
+
   async obtenerTodas(): Promise<Tarifa[]> {
     return this.prisma.tarifa.findMany({ include: { tipo_vehiculo: true } });
+  }
+
+  async actualizar(id: number, datos: any): Promise<Tarifa> {
+    return this.prisma.tarifa.update({
+      where: { id },
+      data: datos,
+    });
   }
 
   async eliminar(id: number): Promise<Tarifa> {

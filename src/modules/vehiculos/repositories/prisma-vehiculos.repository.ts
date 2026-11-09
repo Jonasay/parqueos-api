@@ -19,6 +19,13 @@ export class PrismaVehiculosRepository implements IVehiculosRepository {
     return this.prisma.vehiculo.findMany();
   }
 
+  async actualizar(placa: string, datos: any): Promise<Vehiculo> {
+    return this.prisma.vehiculo.update({
+      where: { placa },
+      data: datos,
+    });
+  }
+
   async eliminar(placa: string): Promise<Vehiculo> {
     return this.prisma.vehiculo.update({
       where: { placa },

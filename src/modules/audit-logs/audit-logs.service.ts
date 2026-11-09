@@ -24,6 +24,19 @@ export class AuditLogsService {
     return this.auditLogsRepository.buscarPorUsuario(usuarioId);
   }
 
+  async buscarPorId(id: number) {
+    const log = await this.auditLogsRepository.buscarPorId(id);
+    if (!log) {
+      throw new NotFoundException(`Registro de auditoría con ID ${id} no encontrado.`);
+    }
+    return log;
+  }
+
+  async actualizarLog(id: number, datos: any) {
+    await this.buscarPorId(id);
+    return this.auditLogsRepository.actualizar(id, datos);
+  }
+
   async eliminarLog(usuarioId: number) {
     const logs = await this.auditLogsRepository.buscarPorUsuario(usuarioId);
     if (!logs || logs.length === 0) {

@@ -28,6 +28,11 @@ export class NivelesParqueoService {
     return this.nivelesParqueoRepository.obtenerPorSucursal(sucursalId);
   }
 
+  async actualizarNivel(id: number, datos: any) {
+    await this.buscarPorId(id);
+    return this.nivelesParqueoRepository.actualizar(id, datos);
+  }
+
   async eliminarNivel(id: number) {
     await this.buscarPorId(id);
     return this.nivelesParqueoRepository.eliminar(id);

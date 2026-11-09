@@ -29,6 +29,24 @@ export class TarifasService {
     return tarifa;
   }
 
+  async buscarPorId(id: number) {
+    const tarifa = await this.tarifasRepository.buscarPorId(id);
+    if (!tarifa) {
+      throw new NotFoundException(`Tarifa con ID ${id} no encontrada.`);
+    }
+    return tarifa;
+  }
+
+  async actualizarTarifa(id: number, datos: any) {
+    await this.buscarPorId(id);
+    return this.tarifasRepository.actualizar(id, datos);
+  }
+
+  async actualizarTarifaPorTipoVehiculo(tipoVehiculoId: number, datos: any) {
+    const tarifa = await this.buscarTarifaActiva(tipoVehiculoId);
+    return this.tarifasRepository.actualizar(tarifa.id, datos);
+  }
+
   async eliminarTarifa(tipoVehiculoId: number) {
     const tarifa = await this.buscarTarifaActiva(tipoVehiculoId);
     return this.tarifasRepository.eliminar(tarifa.id);

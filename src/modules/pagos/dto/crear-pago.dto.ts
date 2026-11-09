@@ -1,5 +1,5 @@
 import { IsInt, IsNumber, IsBoolean, IsOptional, Min } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
 export class CrearPagoDto {
   @ApiProperty({ description: 'ID del ticket a pagar', example: 1 })
@@ -26,3 +26,5 @@ export class CrearPagoDto {
   @IsOptional()
   requiere_fel?: boolean;
 }
+
+export class ActualizarPagoDto extends PartialType(CrearPagoDto) {}

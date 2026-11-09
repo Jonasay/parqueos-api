@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { VehiculosService } from './vehiculos.service.js';
-import { CrearVehiculoDto } from './dto/crear-vehiculo.dto.js';
+import { CrearVehiculoDto, ActualizarVehiculoDto } from './dto/crear-vehiculo.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
@@ -31,6 +31,17 @@ export class VehiculosController {
   @ApiResponse({ status: 404, description: 'Vehículo no encontrado.' })
   async buscarPorPlaca(@Param('placa') placa: string) {
     return this.vehiculosService.buscarPorPlaca(placa);
+  }
+
+  @Put(':placa')
+  @ApiOperation({ summary: 'Actualiza un vehículo por su placa' })
+  @ApiResponse({ status: 200, description: 'Vehículo actualizado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Vehículo no encontrado.' })
+  async actualizar(
+    @Param('placa') placa: string,
+    @Body() actualizarVehiculoDto: ActualizarVehiculoDto,
+  ) {
+    return this.vehiculosService.actualizarVehiculo(placa, actualizarVehiculoDto);
   }
 
   @Delete(':placa')

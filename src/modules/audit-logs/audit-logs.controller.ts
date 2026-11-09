@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { AuditLogsService } from './audit-logs.service.js';
-import { CrearAuditLogDto } from './dto/crear-audit-log.dto.js';
+import { CrearAuditLogDto, ActualizarAuditLogDto } from './dto/crear-audit-log.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
@@ -27,6 +27,17 @@ export class AuditLogsController {
   @ApiOperation({ summary: 'Filtra la bitácora por ID de usuario' })
   async buscarPorUsuario(@Param('id', ParseIntPipe) id: number) {
     return this.auditLogsService.obtenerHistorialPorUsuario(id);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualiza un registro de auditoría por su ID' })
+  @ApiResponse({ status: 200, description: 'Registro actualizado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Registro no encontrado.' })
+  async actualizar(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() actualizarAuditLogDto: ActualizarAuditLogDto,
+  ) {
+    return this.auditLogsService.actualizarLog(id, actualizarAuditLogDto);
   }
 
   @Delete('usuario/:id')

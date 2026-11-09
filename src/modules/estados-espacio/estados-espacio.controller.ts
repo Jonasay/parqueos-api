@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { EstadosEspacioService } from './estados-espacio.service.js';
-import { CrearEstadoEspacioDto } from './dto/crear-estado-espacio.dto.js';
+import { CrearEstadoEspacioDto, ActualizarEstadoEspacioDto } from './dto/crear-estado-espacio.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
@@ -29,6 +29,17 @@ export class EstadosEspacioController {
   @ApiOperation({ summary: 'Busca un estado de espacio por su ID' })
   async buscarPorId(@Param('id', ParseIntPipe) id: number) {
     return this.estadosEspacioService.buscarPorId(id);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualiza un estado de espacio por su ID' })
+  @ApiResponse({ status: 200, description: 'Estado actualizado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Estado no encontrado.' })
+  async actualizar(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() actualizarEstadoEspacioDto: ActualizarEstadoEspacioDto,
+  ) {
+    return this.estadosEspacioService.actualizarEstado(id, actualizarEstadoEspacioDto);
   }
 
   @Delete(':id')

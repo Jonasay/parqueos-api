@@ -22,6 +22,17 @@ export class PrismaAuditLogsRepository implements IAuditLogsRepository {
     });
   }
 
+  async buscarPorId(id: number): Promise<AuditLog | null> {
+    return this.prisma.auditLog.findUnique({ where: { id } });
+  }
+
+  async actualizar(id: number, datos: any): Promise<AuditLog> {
+    return this.prisma.auditLog.update({
+      where: { id },
+      data: datos,
+    });
+  }
+
   async eliminarPorUsuario(usuarioId: number): Promise<any> {
     return this.prisma.auditLog.updateMany({
       where: { usuario_id: usuarioId },

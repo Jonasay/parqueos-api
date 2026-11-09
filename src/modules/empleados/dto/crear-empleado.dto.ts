@@ -1,5 +1,5 @@
 import { IsString, IsInt, IsNotEmpty, Length, IsOptional } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
 export class CrearEmpleadoDto {
   @ApiProperty({ description: 'ID del usuario asignado a este empleado', example: 2 })
@@ -28,3 +28,5 @@ export class CrearEmpleadoDto {
   @IsOptional()
   telefono?: string;
 }
+
+export class ActualizarEmpleadoDto extends PartialType(CrearEmpleadoDto) {}

@@ -33,6 +33,13 @@ export class PrismaTicketsRepository implements ITicketsRepository {
     });
   }
 
+  async actualizar(codigoTicket: string, datos: any): Promise<Ticket> {
+    return this.prisma.ticket.update({
+      where: { codigo_ticket: codigoTicket },
+      data: datos,
+    });
+  }
+
   async eliminar(codigoTicket: string): Promise<Ticket> {
     return this.prisma.ticket.update({
       where: { codigo_ticket: codigoTicket },

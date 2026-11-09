@@ -7,5 +7,6 @@ export interface IEstadosEspacioRepository {
   buscarPorNombre(nombre: string): Promise<EstadoEspacio | null>;
   buscarPorId(id: number): Promise<EstadoEspacio | null>;
   obtenerTodos(): Promise<EstadoEspacio[]>;
+  actualizar(id: number, datos: any): Promise<EstadoEspacio>;
   eliminar(id: number): Promise<EstadoEspacio>;
 }

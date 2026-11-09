@@ -35,6 +35,14 @@ export class EmpleadosService {
     return empleado;
   }
 
+  async actualizarEmpleado(usuarioId: number, datos: any) {
+    const empleado = await this.empleadosRepository.buscarPorUsuarioId(usuarioId);
+    if (!empleado) {
+      throw new NotFoundException(`Empleado con usuario ID ${usuarioId} no encontrado.`);
+    }
+    return this.empleadosRepository.actualizar(usuarioId, datos);
+  }
+
   async eliminarEmpleado(usuarioId: number) {
     const empleado = await this.empleadosRepository.buscarPorUsuarioId(usuarioId);
     if (!empleado) {

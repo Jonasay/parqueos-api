@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service.js';
-import { CrearUsuarioDto } from './dto/crear-usuario.dto.js';
+import { CrearUsuarioDto, ActualizarUsuarioDto } from './dto/crear-usuario.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
@@ -23,6 +23,17 @@ export class UsuariosController {
   @ApiOperation({ summary: 'Lista todos los usuarios con sus roles y perfiles' })
   async obtenerTodos() {
     return this.usuariosService.obtenerTodos();
+  }
+
+  @Put(':idOrEmail')
+  @ApiOperation({ summary: 'Actualiza un usuario por su ID o email' })
+  @ApiResponse({ status: 200, description: 'Usuario actualizado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
+  async actualizar(
+    @Param('idOrEmail') idOrEmail: string,
+    @Body() actualizarUsuarioDto: ActualizarUsuarioDto,
+  ) {
+    return this.usuariosService.actualizarUsuario(idOrEmail, actualizarUsuarioDto);
   }
 
   @Delete(':email')

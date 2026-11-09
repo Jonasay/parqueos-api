@@ -1,5 +1,5 @@
 import { IsInt, IsString, IsNotEmpty, IsOptional } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
 export class CrearAuditLogDto {
   @ApiProperty({ description: 'ID del usuario que realiza la acción', example: 1 })
@@ -17,3 +17,5 @@ export class CrearAuditLogDto {
   @IsOptional()
   detalles?: string;
 }
+
+export class ActualizarAuditLogDto extends PartialType(CrearAuditLogDto) {}

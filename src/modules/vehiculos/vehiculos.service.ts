@@ -30,6 +30,11 @@ export class VehiculosService {
     return this.vehiculosRepository.obtenerTodos();
   }
 
+  async actualizarVehiculo(placa: string, datos: any) {
+    await this.buscarPorPlaca(placa);
+    return this.vehiculosRepository.actualizar(placa, datos);
+  }
+
   async eliminarVehiculo(placa: string) {
     await this.buscarPorPlaca(placa);
     return this.vehiculosRepository.eliminar(placa);

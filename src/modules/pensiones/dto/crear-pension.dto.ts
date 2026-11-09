@@ -1,5 +1,5 @@
 import { IsInt, IsNotEmpty, IsDateString, Min } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 export class CrearPensionDto {
   @ApiProperty({ description: 'ID del cliente titular de la pensión', example: 1 })
@@ -30,3 +30,6 @@ export class CrearPensionDto {
   @IsNotEmpty()
   fecha_fin: string;
 }
+
+export class ActualizarPensionDto extends PartialType(CrearPensionDto) {}
+

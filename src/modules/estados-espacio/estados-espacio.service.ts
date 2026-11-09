@@ -30,6 +30,11 @@ export class EstadosEspacioService {
     return estado;
   }
 
+  async actualizarEstado(id: number, datos: any) {
+    await this.buscarPorId(id);
+    return this.estadosEspacioRepository.actualizar(id, datos);
+  }
+
   async eliminarEstado(id: number) {
     await this.buscarPorId(id);
     return this.estadosEspacioRepository.eliminar(id);

@@ -29,6 +29,11 @@ export class SucursalesService {
     return sucursal;
   }
 
+  async actualizarSucursal(id: number, datos: any) {
+    await this.buscarPorId(id);
+    return this.sucursalesRepository.actualizar(id, datos);
+  }
+
   async eliminarSucursal(id: number) {
     await this.buscarPorId(id);
     return this.sucursalesRepository.eliminar(id);

@@ -7,5 +7,6 @@ export interface ITiposVehiculoRepository {
   buscarPorNombre(nombre: string): Promise<TipoVehiculo | null>;
   buscarPorId(id: number): Promise<TipoVehiculo | null>;
   obtenerTodos(): Promise<TipoVehiculo[]>;
+  actualizar(id: number, datos: any): Promise<TipoVehiculo>;
   eliminar(id: number): Promise<TipoVehiculo>;
 }

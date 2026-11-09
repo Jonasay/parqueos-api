@@ -1,5 +1,5 @@
 import { IsEmail, IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 export class CrearUsuarioDto {
   @ApiProperty({ description: 'Correo electrónico del usuario', example: 'operador@umes.edu.gt' })
@@ -17,3 +17,5 @@ export class CrearUsuarioDto {
   @Min(1)
   rol_id: number;
 }
+
+export class ActualizarUsuarioDto extends PartialType(CrearUsuarioDto) {}

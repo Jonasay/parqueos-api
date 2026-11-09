@@ -1,5 +1,5 @@
 import { IsString, IsInt, IsOptional, IsNotEmpty, Length } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
 export class CrearVehiculoDto {
   @ApiProperty({ description: 'Placa del vehículo', example: 'P123ABC' })
@@ -23,3 +23,5 @@ export class CrearVehiculoDto {
   @IsOptional()
   cliente_id?: number;
 }
+
+export class ActualizarVehiculoDto extends PartialType(CrearVehiculoDto) {}

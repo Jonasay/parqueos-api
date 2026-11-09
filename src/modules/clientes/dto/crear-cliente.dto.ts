@@ -1,5 +1,5 @@
 import { IsString, IsInt, IsOptional, IsNotEmpty, Length } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
 export class CrearClienteDto {
   @ApiProperty({ description: 'ID del usuario asociado', example: 1 })
@@ -23,3 +23,5 @@ export class CrearClienteDto {
   @IsOptional()
   telefono?: string;
 }
+
+export class ActualizarClienteDto extends PartialType(CrearClienteDto) {}

@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 export class CrearRolDto {
   @ApiProperty({ description: 'Nombre del rol en el sistema', example: 'Administrador' })
@@ -8,3 +8,5 @@ export class CrearRolDto {
   @MaxLength(50)
   nombre: string;
 }
+
+export class ActualizarRolDto extends PartialType(CrearRolDto) {}

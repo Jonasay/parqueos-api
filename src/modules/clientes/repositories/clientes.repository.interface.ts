@@ -6,5 +6,6 @@ export interface IClientesRepository {
   crear(datos: any): Promise<Cliente>;
   buscarPorUsuarioId(usuarioId: number): Promise<Cliente | null>;
   obtenerTodos(): Promise<Cliente[]>;
+  actualizar(usuarioId: number, datos: any): Promise<Cliente>;
   eliminar(usuarioId: number): Promise<Cliente>;
 }

@@ -29,6 +29,11 @@ export class RolesService {
     return rol;
   }
 
+  async actualizarRol(id: number, datos: any) {
+    await this.buscarPorId(id);
+    return this.rolesRepository.actualizar(id, datos);
+  }
+
   async eliminarRol(id: number) {
     await this.buscarPorId(id);
     return this.rolesRepository.eliminar(id);

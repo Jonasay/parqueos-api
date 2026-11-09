@@ -6,5 +6,6 @@ export interface ITicketsRepository {
     registrarEntrada(vehiculoId: number, espacioId: number, empleadoId: number): Promise<Ticket>;
     buscarPorCodigo(codigoTicket: string): Promise<Ticket | null>;
     actualizarSalida(id: number, horaSalida: Date): Promise<Ticket>;
+    actualizar(codigoTicket: string, datos: any): Promise<Ticket>;
     eliminar(codigoTicket: string): Promise<Ticket>;
 }

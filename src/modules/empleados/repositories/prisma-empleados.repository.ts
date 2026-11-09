@@ -5,7 +5,7 @@ import { Empleado } from '@prisma/client';
 
 @Injectable()
 export class PrismaEmpleadosRepository implements IEmpleadosRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async crear(datos: any): Promise<Empleado> {
     return this.prisma.empleado.create({ data: datos });
@@ -21,6 +21,13 @@ export class PrismaEmpleadosRepository implements IEmpleadosRepository {
 
   async obtenerTodos(): Promise<Empleado[]> {
     return this.prisma.empleado.findMany({ include: { usuario: true } });
+  }
+
+  async actualizar(usuarioId: number, datos: any): Promise<Empleado> {
+    return this.prisma.empleado.update({
+      where: { usuario_id: usuarioId },
+      data: datos,
+    });
   }
 
   async eliminar(usuarioId: number): Promise<Empleado> {

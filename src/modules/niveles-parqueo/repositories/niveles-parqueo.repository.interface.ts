@@ -7,5 +7,6 @@ export interface INivelesParqueoRepository {
   buscarPorNombreYSucursal(nombreNivel: string, sucursalId: number): Promise<NivelParqueo | null>;
   buscarPorId(id: number): Promise<NivelParqueo | null>;
   obtenerPorSucursal(sucursalId: number): Promise<NivelParqueo[]>;
+  actualizar(id: number, datos: any): Promise<NivelParqueo>;
   eliminar(id: number): Promise<NivelParqueo>;
 }

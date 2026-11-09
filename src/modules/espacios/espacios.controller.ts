@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { EspaciosService } from './espacios.service.js';
-import { CrearEspacioDto } from './dto/crear-espacio.dto.js';
+import { CrearEspacioDto, ActualizarEspacioDto } from './dto/crear-espacio.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
@@ -34,6 +34,17 @@ export class EspaciosController {
   @ApiResponse({ status: 404, description: 'El espacio solicitado no existe.' })
   async buscarPorId(@Param('id', ParseIntPipe) id: number) {
     return this.espaciosService.buscarPorId(id);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualiza un espacio de parqueo por su ID' })
+  @ApiResponse({ status: 200, description: 'Espacio actualizado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'El espacio solicitado no existe.' })
+  async actualizar(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() actualizarEspacioDto: ActualizarEspacioDto,
+  ) {
+    return this.espaciosService.actualizarEspacio(id, actualizarEspacioDto);
   }
 
   @Delete(':id')

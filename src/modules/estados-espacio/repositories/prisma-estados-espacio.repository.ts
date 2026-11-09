@@ -23,6 +23,13 @@ export class PrismaEstadosEspacioRepository implements IEstadosEspacioRepository
     return this.prisma.estadoEspacio.findMany();
   }
 
+  async actualizar(id: number, datos: any): Promise<EstadoEspacio> {
+    return this.prisma.estadoEspacio.update({
+      where: { id },
+      data: datos,
+    });
+  }
+
   async eliminar(id: number): Promise<EstadoEspacio> {
     return this.prisma.estadoEspacio.update({ where: { id }, data: { activo: false } });
   }

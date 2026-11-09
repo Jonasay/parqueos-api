@@ -3,6 +3,7 @@ import { IMetodosPagoRepository } from './metodos-pago.repository.interface.js';
 import { PrismaService } from '../../../prisma/prisma.service.js';
 import { MetodoPago } from '@prisma/client';
 
+@Injectable()
 export class PrismaMetodosPagoRepository implements IMetodosPagoRepository {
   constructor(private readonly prisma: PrismaService) {}
 
@@ -20,6 +21,13 @@ export class PrismaMetodosPagoRepository implements IMetodosPagoRepository {
 
   async obtenerTodos(): Promise<MetodoPago[]> {
     return this.prisma.metodoPago.findMany();
+  }
+
+  async actualizar(id: number, datos: any): Promise<MetodoPago> {
+    return this.prisma.metodoPago.update({
+      where: { id },
+      data: datos,
+    });
   }
 
   async eliminar(id: number): Promise<MetodoPago> {

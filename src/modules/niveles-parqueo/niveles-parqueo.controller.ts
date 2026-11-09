@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { NivelesParqueoService } from './niveles-parqueo.service.js';
-import { CrearNivelParqueoDto } from './dto/crear-nivel-parqueo.dto.js';
+import { CrearNivelParqueoDto, ActualizarNivelParqueoDto } from './dto/crear-nivel-parqueo.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
@@ -31,6 +31,17 @@ export class NivelesParqueoController {
   @ApiResponse({ status: 404, description: 'Nivel no encontrado.' })
   async buscarPorId(@Param('id', ParseIntPipe) id: number) {
     return this.nivelesParqueoService.buscarPorId(id);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualiza un nivel de parqueo por su ID' })
+  @ApiResponse({ status: 200, description: 'Nivel actualizado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Nivel no encontrado.' })
+  async actualizar(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() actualizarNivelParqueoDto: ActualizarNivelParqueoDto,
+  ) {
+    return this.nivelesParqueoService.actualizarNivel(id, actualizarNivelParqueoDto);
   }
 
   @Delete(':id')

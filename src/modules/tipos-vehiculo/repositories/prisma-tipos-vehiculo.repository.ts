@@ -23,6 +23,13 @@ export class PrismaTiposVehiculoRepository implements ITiposVehiculoRepository {
     return this.prisma.tipoVehiculo.findMany();
   }
 
+  async actualizar(id: number, datos: any): Promise<TipoVehiculo> {
+    return this.prisma.tipoVehiculo.update({
+      where: { id },
+      data: datos,
+    });
+  }
+
   async eliminar(id: number): Promise<TipoVehiculo> {
     return this.prisma.tipoVehiculo.update({ where: { id }, data: { activo: false } });
   }

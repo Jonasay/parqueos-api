@@ -26,6 +26,13 @@ export class PrismaSucursalesRepository implements ISucursalesRepository {
     });
   }
 
+  async actualizar(id: number, datos: any): Promise<Sucursal> {
+    return this.prisma.sucursal.update({
+      where: { id },
+      data: datos,
+    });
+  }
+
   async eliminar(id: number): Promise<Sucursal> {
     return this.prisma.sucursal.update({ where: { id }, data: { activo: false } });
   }

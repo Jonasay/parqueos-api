@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { SucursalesService } from './sucursales.service.js';
-import { CrearSucursalDto } from './dto/crear-sucursal.dto.js';
+import { CrearSucursalDto, ActualizarSucursalDto } from './dto/crear-sucursal.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
@@ -31,6 +31,17 @@ export class SucursalesController {
   @ApiResponse({ status: 404, description: 'Sucursal no encontrada.' })
   async buscarPorId(@Param('id', ParseIntPipe) id: number) {
     return this.sucursalesService.buscarPorId(id);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualiza una sucursal por su ID' })
+  @ApiResponse({ status: 200, description: 'Sucursal actualizada exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Sucursal no encontrada.' })
+  async actualizar(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() actualizarSucursalDto: ActualizarSucursalDto,
+  ) {
+    return this.sucursalesService.actualizarSucursal(id, actualizarSucursalDto);
   }
 
   @Delete(':id')

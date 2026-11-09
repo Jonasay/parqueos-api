@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { EmpleadosService } from './empleados.service.js';
-import { CrearEmpleadoDto } from './dto/crear-empleado.dto.js';
+import { CrearEmpleadoDto, ActualizarEmpleadoDto } from './dto/crear-empleado.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
@@ -31,6 +31,17 @@ export class EmpleadosController {
   @ApiResponse({ status: 404, description: 'Empleado no encontrado.' })
   async buscarPorDpi(@Param('dpi') dpi: string) {
     return this.empleadosService.buscarPorDpi(dpi);
+  }
+
+  @Put(':usuarioId')
+  @ApiOperation({ summary: 'Actualiza un empleado por su ID de usuario' })
+  @ApiResponse({ status: 200, description: 'Empleado actualizado exitosamente.' })
+  @ApiResponse({ status: 404, description: 'Empleado no encontrado.' })
+  async actualizar(
+    @Param('usuarioId', ParseIntPipe) usuarioId: number,
+    @Body() actualizarEmpleadoDto: ActualizarEmpleadoDto,
+  ) {
+    return this.empleadosService.actualizarEmpleado(usuarioId, actualizarEmpleadoDto);
   }
 
   @Delete(':usuarioId')
