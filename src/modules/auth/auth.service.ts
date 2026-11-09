@@ -7,7 +7,6 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
   UnprocessableEntityException,
-  BadGatewayException,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { Prisma } from '@prisma/client';
