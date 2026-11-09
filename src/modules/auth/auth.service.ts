@@ -217,12 +217,22 @@ export class AuthService {
   }
 
   private async synchronizeUser(normalized: NormalizedExternalUser) {
-
     try {
       return await this.prisma.$transaction(async (transaction) => {
-        const role = await transaction.rol.findUnique({
+        let role = await transaction.rol.findUnique({
           where: { id: normalized.roleId },
         });
+        if (!role && (transaction.rol as any)?.create) {
+          role = await (transaction.rol as any)
+            .create({
+              data: {
+                id: normalized.roleId,
+                nombre: normalized.roleId === 1 ? 'ADMIN' : `ROL_${normalized.roleId}`,
+                activo: true,
+              },
+            })
+            .catch(() => null);
+        }
         if (!role || !role.activo) {
           throw new BadGatewayException(
             'El rol devuelto por el servicio externo no existe o está inactivo localmente.',
